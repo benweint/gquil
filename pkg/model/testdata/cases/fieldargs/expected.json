@@ -1,0 +1,49 @@
+{
+  "directives": null,
+  "types": [
+    {
+      "fields": [
+        {
+          "name": "name",
+          "type": "String"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Person"
+    },
+    {
+      "fields": [
+        {
+          "arguments": [
+            {
+              "name": "first",
+              "type": "Int"
+            },
+            {
+              "name": "filter",
+              "type": "Filter"
+            }
+          ],
+          "name": "people",
+          "type": "Person"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Foo"
+    },
+    {
+      "fields": [
+        {
+          "name": "prefix",
+          "type": "String"
+        },
+        {
+          "name": "suffix",
+          "type": "String"
+        }
+      ],
+      "kind": "INPUT_OBJECT",
+      "name": "Filter"
+    }
+  ]
+}

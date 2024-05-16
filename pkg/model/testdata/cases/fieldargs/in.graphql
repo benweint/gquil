@@ -1,0 +1,12 @@
+type Foo {
+    people(first: Int, filter: Filter): Person
+}
+
+type Person {
+    name: String
+}
+
+input Filter {
+    prefix: String
+    suffix: String
+}

@@ -1,0 +1,6 @@
+type Foo {
+    names: [String]
+    names2: [String!]
+    names3: [String]!
+    names4: [String!]!
+}

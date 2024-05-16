@@ -1,0 +1,52 @@
+{
+  "directives": null,
+  "types": [
+    {
+      "fields": [
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "nameNotNull",
+          "type": {
+            "kind": "NON_NULL",
+            "ofType": "String"
+          }
+        },
+        {
+          "name": "names",
+          "type": {
+            "kind": "LIST",
+            "ofType": "String"
+          }
+        },
+        {
+          "name": "namesNotNull",
+          "type": {
+            "kind": "NON_NULL",
+            "ofType": {
+              "kind": "LIST",
+              "ofType": "String"
+            }
+          }
+        },
+        {
+          "name": "namesNotNullElementsNotNull",
+          "type": {
+            "kind": "NON_NULL",
+            "ofType": {
+              "kind": "LIST",
+              "ofType": {
+                "kind": "NON_NULL",
+                "ofType": "String"
+              }
+            }
+          }
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Foo"
+    }
+  ]
+}

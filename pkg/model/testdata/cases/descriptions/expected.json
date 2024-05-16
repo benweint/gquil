@@ -1,0 +1,67 @@
+{
+  "directives": null,
+  "types": [
+    {
+      "description": "This type has a description",
+      "fields": [
+        {
+          "description": "This field has a description",
+          "name": "withDescription",
+          "type": "String"
+        },
+        {
+          "name": "noDescription",
+          "type": "String"
+        },
+        {
+          "arguments": [
+            {
+              "description": "Description for first arg",
+              "name": "firstArg",
+              "type": "Int"
+            }
+          ],
+          "name": "argDesc",
+          "type": "String"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Foo"
+    },
+    {
+      "enumValues": [
+        {
+          "description": "This one has a description",
+          "name": "CHOCOLATE"
+        },
+        {
+          "name": "VANILLA"
+        },
+        {
+          "name": "STRAWBERRY"
+        }
+      ],
+      "kind": "ENUM",
+      "name": "Flavor"
+    },
+    {
+      "description": "This union has a description",
+      "kind": "UNION",
+      "name": "Things",
+      "possibleTypes": [
+        "Foo",
+        "Bar"
+      ]
+    },
+    {
+      "fields": [
+        {
+          "name": "foo",
+          "type": "String"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Bar"
+    }
+  ]
+}

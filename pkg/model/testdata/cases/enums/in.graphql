@@ -1,0 +1,8 @@
+enum Order {
+    ASCENDING
+    DESCENDING
+}
+
+type Foo {
+    names(order: Order!): [String!]
+}

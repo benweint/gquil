@@ -1,0 +1,2 @@
+[tools]
+golang = { version = "prefix:1.22" }

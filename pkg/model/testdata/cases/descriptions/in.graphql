@@ -1,0 +1,26 @@
+"This type has a description"
+type Foo {
+    "This field has a description"
+    withDescription: String
+
+    noDescription: String
+
+    argDesc(
+        "Description for first arg"
+        firstArg: Int
+    ): String
+}
+
+type Bar {
+    foo: String
+}
+
+"This union has a description"
+union Things = Foo | Bar
+
+enum Flavor {
+    "This one has a description"
+    CHOCOLATE
+    VANILLA
+    STRAWBERRY
+}

@@ -1,0 +1,7 @@
+type Foo {
+    name: String
+    nameNotNull: String!
+    names: [String]
+    namesNotNull: [String]!
+    namesNotNullElementsNotNull: [String!]!
+}
