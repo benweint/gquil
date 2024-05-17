@@ -37,10 +37,11 @@ type Type struct {
 }
 
 type Directive struct {
-	Name        string              `json:"name"`
-	Description string              `json:"description,omitempty"`
-	Locations   []DirectiveLocation `json:"locations"`
-	Args        []InputValue        `json:"args"`
+	Name         string              `json:"name"`
+	Description  string              `json:"description,omitempty"`
+	Locations    []DirectiveLocation `json:"locations"`
+	Args         []InputValue        `json:"args"`
+	IsRepeatable bool                `json:"isRepeatable"`
 }
 
 type Field struct {

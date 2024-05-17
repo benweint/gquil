@@ -23,6 +23,7 @@ query IntrospectionQuery {
       args {
         ...InputValue
       }
+      isRepeatable
     }
   }
 }
