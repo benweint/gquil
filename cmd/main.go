@@ -10,6 +10,7 @@ var cli struct {
 	Merge         commands.MergeCmd         `cmd:"" help:"Merge multiple SDL documents into a single one."`
 	Json          commands.JsonCmd          `cmd:"" help:"Return a JSON representation of an SDL document."`
 	Introspection commands.IntrospectionCmd `cmd:"" help:"Interact with a GraphQL introspection endpoint over HTTP."`
+	Viz           commands.VizCmd           `cmd:"" help:"Visualize schema as a GraphViz dot file."`
 }
 
 func main() {

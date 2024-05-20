@@ -1,6 +1,35 @@
-type Foo {
-    names: [String]
-    names2: [String!]
-    names3: [String]!
-    names4: [String!]!
+type A {
+    b: B
+}
+
+type B {
+    c: C
+}
+
+type C {
+    d: D
+    e: E
+}
+
+type D {
+    x: String
+}
+
+type E {
+    x: String
+}
+
+type ImageRendition {
+	width: Int!
+	url: String!
+	name: String!
+	height: Int!
+	format: ImageFormat!
+}
+
+enum ImageFormat {
+	NOT_SET
+	JPG
+	PNG
+	GIF
 }
