@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/benweint/gquilt/pkg/graph"
+	"github.com/benweint/gquil/pkg/graph"
 )
 
 type JsonCmd struct {

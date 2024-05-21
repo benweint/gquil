@@ -3,7 +3,7 @@ package graph
 import (
 	"strings"
 
-	"github.com/benweint/gquilt/pkg/model"
+	"github.com/benweint/gquil/pkg/model"
 )
 
 func makeFieldFilters(roots []string) map[string]*fieldFilter {

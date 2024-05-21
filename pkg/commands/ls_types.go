@@ -6,8 +6,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/benweint/gquilt/pkg/graph"
-	"github.com/benweint/gquilt/pkg/model"
+	"github.com/benweint/gquil/pkg/graph"
+	"github.com/benweint/gquil/pkg/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 

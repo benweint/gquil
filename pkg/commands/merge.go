@@ -3,7 +3,7 @@ package commands
 import (
 	"os"
 
-	"github.com/benweint/gquilt/pkg/astutil"
+	"github.com/benweint/gquil/pkg/astutil"
 	"github.com/vektah/gqlparser/v2/formatter"
 )
 

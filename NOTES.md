@@ -3,8 +3,8 @@
 
 ## ls command
 
-`gquilt ls types`
-`gquilt ls directives`
+`gquil ls types`
+`gquil ls directives`
 
 Types are:
 

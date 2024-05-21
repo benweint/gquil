@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/benweint/gquilt/pkg/model"
+	"github.com/benweint/gquil/pkg/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 

@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/benweint/gquilt/pkg/graph"
+	"github.com/benweint/gquil/pkg/graph"
 )
 
 type VizCmd struct {

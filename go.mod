@@ -1,4 +1,4 @@
-module github.com/benweint/gquilt
+module github.com/benweint/gquil
 
 go 1.22
 

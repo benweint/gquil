@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/benweint/gquilt/pkg/astutil"
+	"github.com/benweint/gquil/pkg/astutil"
 )
 
 func filterBuiltinTypes(defs DefinitionList) DefinitionList {

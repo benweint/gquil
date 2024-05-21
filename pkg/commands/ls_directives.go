@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/benweint/gquilt/pkg/model"
+	"github.com/benweint/gquil/pkg/model"
 )
 
 type LsDirectivesCmd struct {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/benweint/gquilt/pkg/introspection"
+	"github.com/benweint/gquil/pkg/introspection"
 )
 
 type IntrospectionCmd struct {

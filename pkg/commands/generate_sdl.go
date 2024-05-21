@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/benweint/gquilt/pkg/astutil"
-	"github.com/benweint/gquilt/pkg/introspection"
+	"github.com/benweint/gquil/pkg/astutil"
+	"github.com/benweint/gquil/pkg/introspection"
 	"github.com/vektah/gqlparser/v2/formatter"
 )
 
