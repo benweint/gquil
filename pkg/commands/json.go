@@ -18,7 +18,7 @@ func (c *JsonCmd) Help() string {
 
 Unlike the introspection types in the GraphQL spec, the JSON output format does include information about the application sites of directives, under the 'directives' key.
 
-The JSON format for fields and arguments adds several convenience fields which are useful when processing the output:
+The JSON format for fields and arguments also adds several convenience fields which are useful when processing the output:
 
   * underlyingTypeName: the underlying named type of the field, after unwrapping list and non-null wrapping types. For example, a field of type '[String!]' would have an underlyingTypeName of 'String')
   * typeName: the type of the field, represented as a string in GraphQL SDL notation (for example: '[String!]!')`

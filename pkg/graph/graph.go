@@ -27,6 +27,7 @@ type EdgeKind int
 
 const (
 	EdgeKindField = iota
+	EdgeKindInputField
 	EdgeKindArgument
 	EdgeKindPossibleType
 )
@@ -36,7 +37,8 @@ type Edge struct {
 	dst          *Node
 	kind         EdgeKind
 	field        *model.FieldDefinition
-	argument     *model.ArgumentDefinition
+	inputField   *model.InputValueDefinition
+	argument     *model.InputValueDefinition
 	possibleType string
 }
 
@@ -130,10 +132,10 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 					continue
 				}
 				edge := &Edge{
-					src:   srcNode,
-					dst:   dstNode,
-					kind:  EdgeKindField,
-					field: f,
+					src:        srcNode,
+					dst:        dstNode,
+					kind:       EdgeKindInputField,
+					inputField: f,
 				}
 				typeEdges = append(typeEdges, edge)
 			}
@@ -251,6 +253,8 @@ func (g *Graph) buildEdgeDefs() []string {
 			switch edge.kind {
 			case EdgeKindField:
 				srcPortSuffix = ":" + portName(edge.field.Name)
+			case EdgeKindInputField:
+				srcPortSuffix = ":" + portName(edge.inputField.Name)
 			case EdgeKindArgument:
 				srcPortSuffix = ":" + portNameForArgument(edge.field.Name, edge.argument.Name)
 			case EdgeKindPossibleType:

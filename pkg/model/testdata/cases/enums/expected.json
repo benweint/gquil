@@ -1,6 +1,40 @@
 {
-  "directives": null,
   "types": [
+    {
+      "fields": [
+        {
+          "arguments": [
+            {
+              "name": "order",
+              "type": {
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "Order"
+                }
+              },
+              "typeName": "Order!",
+              "underlyingTypeName": "Order"
+            }
+          ],
+          "name": "names",
+          "type": {
+            "kind": "LIST",
+            "ofType": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
+            }
+          },
+          "typeName": "[String!]",
+          "underlyingTypeName": "String"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Foo"
+    },
     {
       "enumValues": [
         {
@@ -12,31 +46,6 @@
       ],
       "kind": "ENUM",
       "name": "Order"
-    },
-    {
-      "fields": [
-        {
-          "arguments": [
-            {
-              "name": "order",
-              "type": {
-                "kind": "NON_NULL",
-                "ofType": "Order"
-              }
-            }
-          ],
-          "name": "names",
-          "type": {
-            "kind": "LIST",
-            "ofType": {
-              "kind": "NON_NULL",
-              "ofType": "String"
-            }
-          }
-        }
-      ],
-      "kind": "OBJECT",
-      "name": "Foo"
     }
   ]
 }

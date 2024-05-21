@@ -6,7 +6,8 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-type ArgumentDefinition struct {
+// Based on the __InputValue introspection type.
+type InputValueDefinition struct {
 	Name         string
 	Description  string
 	DefaultValue Value
@@ -14,7 +15,7 @@ type ArgumentDefinition struct {
 	Directives   DirectiveList
 }
 
-type ArgumentDefinitionList []*ArgumentDefinition
+type InputValueDefinitionList []*InputValueDefinition
 
 type ArgumentList []*Argument
 
@@ -23,7 +24,7 @@ type Argument struct {
 	Value Value  `json:"value"`
 }
 
-func (a *ArgumentDefinition) MarshalJSON() ([]byte, error) {
+func (a *InputValueDefinition) MarshalJSON() ([]byte, error) {
 	m := map[string]any{
 		"name":               a.Name,
 		"type":               a.Type,
@@ -46,10 +47,10 @@ func (a *ArgumentDefinition) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-func makeArgumentDefinitionList(in ast.ArgumentDefinitionList) (ArgumentDefinitionList, error) {
-	var result ArgumentDefinitionList
+func makeInputValueDefinitionListFromArgs(in ast.ArgumentDefinitionList) (InputValueDefinitionList, error) {
+	var result InputValueDefinitionList
 	for _, a := range in {
-		argDef, err := makeArgumentDefinition(a)
+		argDef, err := makeInputValueDefinition(a.Name, a.Description, a.Type, a.Directives, a.DefaultValue)
 		if err != nil {
 			return nil, err
 		}
@@ -58,20 +59,33 @@ func makeArgumentDefinitionList(in ast.ArgumentDefinitionList) (ArgumentDefiniti
 	return result, nil
 }
 
-func makeArgumentDefinition(in *ast.ArgumentDefinition) (*ArgumentDefinition, error) {
-	defaultValue, err := makeValue(in.DefaultValue)
+func makeInputValueDefinitionListFromFields(in ast.FieldList) (InputValueDefinitionList, error) {
+	var result InputValueDefinitionList
+	for _, f := range in {
+		inputValueDef, err := makeInputValueDefinition(f.Name, f.Description, f.Type, f.Directives, f.DefaultValue)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, inputValueDef)
+	}
+	return result, nil
+}
+
+func makeInputValueDefinition(name, description string, inType *ast.Type, inDirectives ast.DirectiveList, inDefaultValue *ast.Value) (*InputValueDefinition, error) {
+	defaultValue, err := makeValue(inDefaultValue)
 	if err != nil {
 		return nil, err
 	}
-	directives, err := makeDirectiveList(in.Directives)
+	directives, err := makeDirectiveList(inDirectives)
 	if err != nil {
 		return nil, err
 	}
-	return &ArgumentDefinition{
-		Name:         in.Name,
-		Description:  in.Description,
+	return &InputValueDefinition{
+		Name:         name,
+		Description:  description,
+		Type:         makeType(inType),
 		DefaultValue: defaultValue,
-		Type:         makeType(in.Type),
 		Directives:   directives,
 	}, nil
 }

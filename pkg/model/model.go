@@ -1,6 +1,9 @@
 package model
 
 import (
+	"sort"
+	"strings"
+
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -11,7 +14,7 @@ import (
 type Schema struct {
 	Description          string                  `json:"description,omitempty"`
 	Types                DefinitionList          `json:"types"`
-	QueryTypeName        string                  `json:"queryTypeName"`
+	QueryTypeName        string                  `json:"queryTypeName,omitempty"`
 	MutationTypeName     string                  `json:"mutationTypeName,omitempty"`
 	SubscriptionTypeName string                  `json:"subscriptionTypeName,omitempty"`
 	Directives           DirectiveDefinitionList `json:"directives,omitempty"`
@@ -28,7 +31,7 @@ type Definition struct {
 	Fields FieldDefinitionList `json:"fields,omitempty"`
 
 	// only set for input objects
-	InputFields FieldDefinitionList `json:"inputFields,omitempty"`
+	InputFields InputValueDefinitionList `json:"inputFields,omitempty"`
 
 	// only set for interfaces
 	Interfaces []string `json:"interfaces,omitempty"`
@@ -68,6 +71,12 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 		typesByName[t.Name] = t
 	}
 
+	// We sort here in order to ensure a deterministic ordering of types in the JSON representation,
+	// since ast.Definition.Types is a map, which does not preserve ordering.
+	sort.Slice(types, func(i, j int) bool {
+		return strings.Compare(types[i].Name, types[j].Name) < 0
+	})
+
 	var directives DirectiveDefinitionList
 	for _, dd := range in.Directives {
 		def, err := makeDirectiveDefinition(dd)
@@ -99,7 +108,7 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 	return &Schema{
 		Description:          in.Description,
 		Types:                types,
-		QueryTypeName:        in.Query.Name,
+		QueryTypeName:        maybeTypeName(in.Query),
 		MutationTypeName:     maybeTypeName(in.Mutation),
 		SubscriptionTypeName: maybeTypeName(in.Subscription),
 		Directives:           directives,
@@ -130,14 +139,18 @@ func makeDefinition(in *ast.Definition) (*Definition, error) {
 		PossibleTypes: in.Types,
 	}
 
-	fields, err := makeFieldDefinitionList(in.Fields)
-	if err != nil {
-		return nil, err
-	}
 	if in.Kind == ast.Object || in.Kind == ast.Interface {
+		fields, err := makeFieldDefinitionList(in.Fields)
+		if err != nil {
+			return nil, err
+		}
 		def.Fields = fields
 	} else if in.Kind == ast.InputObject {
-		def.InputFields = fields
+		inputFields, err := makeInputValueDefinitionListFromFields(in.Fields)
+		if err != nil {
+			return nil, err
+		}
+		def.InputFields = inputFields
 	}
 
 	directives, err := makeDirectiveList(in.Directives)

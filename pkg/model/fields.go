@@ -16,12 +16,12 @@ import (
 //   - As a result of the above, the deprecated and deprecationReason fields are omitted, since they would
 //     duplicate the content of the more generic directives field.
 type FieldDefinition struct {
-	Name         string                 `json:"name"`
-	Description  string                 `json:"description,omitempty"`
-	Type         *Type                  `json:"type"`
-	Arguments    ArgumentDefinitionList `json:"arguments,omitempty"`    // only for fields
-	DefaultValue Value                  `json:"defaultValue,omitempty"` // only for input values
-	Directives   DirectiveList          `json:"directives,omitempty"`
+	Name         string                   `json:"name"`
+	Description  string                   `json:"description,omitempty"`
+	Type         *Type                    `json:"type"`
+	Arguments    InputValueDefinitionList `json:"arguments,omitempty"`    // only for fields
+	DefaultValue Value                    `json:"defaultValue,omitempty"` // only for input values
+	Directives   DirectiveList            `json:"directives,omitempty"`
 }
 
 // FieldDefinitionList represents a set of fields definitions on the same object, interface, or input type.
@@ -63,7 +63,7 @@ func makeFieldDefinitionList(in ast.FieldList) (FieldDefinitionList, error) {
 			return nil, err
 		}
 
-		args, err := makeArgumentDefinitionList(f.Arguments)
+		args, err := makeInputValueDefinitionListFromArgs(f.Arguments)
 		if err != nil {
 			return nil, err
 		}

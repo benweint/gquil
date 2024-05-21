@@ -1,15 +1,28 @@
 {
-  "directives": null,
   "types": [
     {
-      "fields": [
+      "inputFields": [
         {
-          "name": "name",
-          "type": "String"
+          "name": "prefix",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
+        },
+        {
+          "name": "suffix",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
         }
       ],
-      "kind": "OBJECT",
-      "name": "Person"
+      "kind": "INPUT_OBJECT",
+      "name": "Filter"
     },
     {
       "fields": [
@@ -17,15 +30,30 @@
           "arguments": [
             {
               "name": "first",
-              "type": "Int"
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int"
+              },
+              "typeName": "Int",
+              "underlyingTypeName": "Int"
             },
             {
               "name": "filter",
-              "type": "Filter"
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "Filter"
+              },
+              "typeName": "Filter",
+              "underlyingTypeName": "Filter"
             }
           ],
           "name": "people",
-          "type": "Person"
+          "type": {
+            "kind": "OBJECT",
+            "name": "Person"
+          },
+          "typeName": "Person",
+          "underlyingTypeName": "Person"
         }
       ],
       "kind": "OBJECT",
@@ -34,16 +62,17 @@
     {
       "fields": [
         {
-          "name": "prefix",
-          "type": "String"
-        },
-        {
-          "name": "suffix",
-          "type": "String"
+          "name": "name",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
         }
       ],
-      "kind": "INPUT_OBJECT",
-      "name": "Filter"
+      "kind": "OBJECT",
+      "name": "Person"
     }
   ]
 }

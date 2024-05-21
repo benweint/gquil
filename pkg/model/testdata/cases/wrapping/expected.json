@@ -1,25 +1,39 @@
 {
-  "directives": null,
   "types": [
     {
       "fields": [
         {
           "name": "name",
-          "type": "String"
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
         },
         {
           "name": "nameNotNull",
           "type": {
             "kind": "NON_NULL",
-            "ofType": "String"
-          }
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "String"
+            }
+          },
+          "typeName": "String!",
+          "underlyingTypeName": "String"
         },
         {
           "name": "names",
           "type": {
             "kind": "LIST",
-            "ofType": "String"
-          }
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "String"
+            }
+          },
+          "typeName": "[String]",
+          "underlyingTypeName": "String"
         },
         {
           "name": "namesNotNull",
@@ -27,9 +41,14 @@
             "kind": "NON_NULL",
             "ofType": {
               "kind": "LIST",
-              "ofType": "String"
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String"
+              }
             }
-          }
+          },
+          "typeName": "[String]!",
+          "underlyingTypeName": "String"
         },
         {
           "name": "namesNotNullElementsNotNull",
@@ -39,10 +58,15 @@
               "kind": "LIST",
               "ofType": {
                 "kind": "NON_NULL",
-                "ofType": "String"
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String"
+                }
               }
             }
-          }
+          },
+          "typeName": "[String!]!",
+          "underlyingTypeName": "String"
         }
       ],
       "kind": "OBJECT",
