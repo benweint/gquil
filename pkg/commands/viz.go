@@ -9,8 +9,9 @@ import (
 type VizCmd struct {
 	// TODO: should not include json flag
 	CommonOptions
-	From  []string `name:"from"`
-	Depth int      `name:"depth" default:"0"`
+	From               []string `name:"from"`
+	Depth              int      `name:"depth" default:"0"`
+	InterfacesAsUnions bool     `name:"interfaces-as-unions" help:"Treat interfaces as unions rather than objects for the purposes of graph construction."`
 }
 
 func (c *VizCmd) Run() error {
@@ -19,7 +20,12 @@ func (c *VizCmd) Run() error {
 		return err
 	}
 
-	g := graph.MakeGraph(s.Types)
+	var opts []graph.GraphOption
+	if c.InterfacesAsUnions {
+		opts = append(opts, graph.WithInterfacesAsUnions())
+	}
+
+	g := graph.MakeGraph(s.Types, opts...)
 
 	if len(c.From) > 0 {
 		g = g.ReachableFrom(c.From, c.Depth)
