@@ -9,7 +9,9 @@ import (
 )
 
 type LsDirectivesCmd struct {
-	CommonOptions
+	InputOptions
+	FilteringOptions
+	OutputOptions
 	IncludeArgs bool `name:"include-args"`
 }
 

@@ -158,6 +158,14 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 	return g
 }
 
+func (g *Graph) GetDefinitions() model.DefinitionList {
+	var result model.DefinitionList
+	for _, node := range g.nodes {
+		result = append(result, node.Definition)
+	}
+	return result
+}
+
 func (g *Graph) ReachableFrom(roots []string, maxDepth int) *Graph {
 	var defs model.DefinitionList
 	defMap := map[string]*model.Definition{}
@@ -257,7 +265,6 @@ func (g *Graph) buildEdgeDefs() []string {
 }
 
 func (g *Graph) makeNodeLabel(node *Node) string {
-	// fmt.Printf("BMW: name = %s, kind = %s, normalizedKind = %s\n", node.Name, node.Kind, normalizeKind(node.Kind, g.interfacesAsUnions))
 	switch normalizeKind(node.Kind, g.interfacesAsUnions) {
 	case ast.Object:
 		return makeFieldTableNodeLabel(node)
@@ -321,7 +328,6 @@ func makePolymorphicLabel(node *Node) string {
 func makeFieldTableNodeLabel(node *Node) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="%s">%s %s</TD></TR>`+"\n", colorForKind(node.Kind), strings.ToLower(string(node.Kind)), node.Name)
-
 	for _, field := range node.Fields {
 		args := field.Arguments
 		result += fmt.Sprintf(`    <TR><TD ROWSPAN="%d">%s</TD><TD COLSPAN="2" PORT="%s">%s</TD></TR>`+"\n", len(args)+1, field.Name, portName(field.Name), field.Type.String())
@@ -329,7 +335,6 @@ func makeFieldTableNodeLabel(node *Node) string {
 			result += fmt.Sprintf(`    <TR><TD>%s</TD><TD PORT="%s">%s</TD></TR>`+"\n", arg.Name, portNameForArgument(field.Name, arg.Name), arg.Type)
 		}
 	}
-
 	result += "\n  </TABLE>"
 	return result
 }

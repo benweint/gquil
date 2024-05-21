@@ -6,21 +6,30 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/benweint/gquilt/pkg/graph"
 	"github.com/benweint/gquilt/pkg/model"
 )
 
 type LsFieldsCmd struct {
-	CommonOptions
+	InputOptions
 	OnType            string `name:"on-type"`
 	OfType            string `name:"of-type"`
 	IncludeArgs       bool   `name:"include-args"`
 	IncludeDirectives bool   `name:"include-directives"`
+	OutputOptions
+	FilteringOptions
+	GraphFilteringOptions
 }
 
 func (c LsFieldsCmd) Run() error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
+	}
+
+	if len(c.From) > 0 {
+		g := graph.MakeGraph(s.Types).ReachableFrom(c.From, c.Depth)
+		s.Types = g.GetDefinitions()
 	}
 
 	if !c.IncludeBuiltins {

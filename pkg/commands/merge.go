@@ -8,7 +8,8 @@ import (
 )
 
 type MergeCmd struct {
-	CommonOptions
+	InputOptions
+	FilteringOptions
 }
 
 func (c *MergeCmd) Run() error {

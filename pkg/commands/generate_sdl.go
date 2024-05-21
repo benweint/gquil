@@ -11,9 +11,9 @@ import (
 )
 
 type GenerateSDLCmd struct {
-	Endpoint        string   `arg:"" help:"The GraphQL introspection endpoint URL to fetch from."`
-	Headers         []string `name:"header" short:"H" help:"Set headers on the introspection request."`
-	IncludeBuiltins bool     `name:"include-builtins" help:"Include built-in definitions."`
+	Endpoint string   `arg:"" help:"The GraphQL introspection endpoint URL to fetch from."`
+	Headers  []string `name:"header" short:"H" help:"Set headers on the introspection request."`
+	FilteringOptions
 }
 
 func (c *GenerateSDLCmd) Run() error {

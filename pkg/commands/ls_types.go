@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/benweint/gquilt/pkg/graph"
 	"github.com/benweint/gquilt/pkg/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -14,17 +15,25 @@ type ObjectFilteringOptions struct {
 }
 
 type LsTypesCmd struct {
-	CommonOptions
+	InputOptions
 	Kind              ast.DefinitionKind `name:"kind" help:"Only list types of the given kind (interface, object, union, input_object, enum, scalar)."`
 	MemberOf          string             `name:"member-of" help:"Only list types which are members of the given union."`
 	Implements        string             `name:"implements" help:"Only list types which implement the given interface."`
 	IncludeDirectives bool               `name:"include-directives" help:"Include directives on each type in output."`
+	FilteringOptions
+	OutputOptions
+	GraphFilteringOptions
 }
 
 func (c LsTypesCmd) Run() error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
+	}
+
+	if len(c.From) > 0 {
+		g := graph.MakeGraph(s.Types).ReachableFrom(c.From, c.Depth)
+		s.Types = g.GetDefinitions()
 	}
 
 	if !c.IncludeBuiltins {

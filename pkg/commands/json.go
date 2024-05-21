@@ -3,16 +3,25 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/benweint/gquilt/pkg/graph"
 )
 
 type JsonCmd struct {
-	CommonOptions
+	InputOptions
+	FilteringOptions
+	GraphFilteringOptions
 }
 
 func (c *JsonCmd) Run() error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
+	}
+
+	if len(c.From) > 0 {
+		g := graph.MakeGraph(s.Types).ReachableFrom(c.From, c.Depth)
+		s.Types = g.GetDefinitions()
 	}
 
 	if !c.IncludeBuiltins {
