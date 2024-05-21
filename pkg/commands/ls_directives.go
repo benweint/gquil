@@ -12,7 +12,6 @@ type LsDirectivesCmd struct {
 	InputOptions
 	FilteringOptions
 	OutputOptions
-	IncludeArgs bool `name:"include-args"`
 }
 
 func (c LsDirectivesCmd) Run() error {
@@ -25,20 +24,14 @@ func (c LsDirectivesCmd) Run() error {
 		s.FilterBuiltins()
 	}
 
-	var results model.DirectiveDefinitionList
-
-	for _, directive := range s.Directives {
-		results = append(results, directive)
-	}
-
 	if c.Json {
-		j, err := json.Marshal(results)
+		j, err := json.Marshal(s.Directives)
 		if err != nil {
 			return err
 		}
 		fmt.Printf(string(j) + "\n")
 	} else {
-		for _, directive := range results {
+		for _, directive := range s.Directives {
 			fmt.Printf("%s\n", formatDirectiveDefinition(directive))
 		}
 	}

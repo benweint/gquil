@@ -12,10 +12,10 @@ import (
 
 type LsFieldsCmd struct {
 	InputOptions
-	OnType            string `name:"on-type"`
-	OfType            string `name:"of-type"`
-	IncludeArgs       bool   `name:"include-args"`
-	IncludeDirectives bool   `name:"include-directives"`
+	OnType      string `name:"on-type"` // TODO help
+	OfType      string `name:"of-type"` // TODO help
+	IncludeArgs bool   `name:"include-args" help:"Include argument definitions in human-readable output. Has no effect with --json."`
+	IncludeDirectivesOption
 	OutputOptions
 	FilteringOptions
 	GraphFilteringOptions

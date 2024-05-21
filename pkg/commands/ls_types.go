@@ -16,10 +16,10 @@ type ObjectFilteringOptions struct {
 
 type LsTypesCmd struct {
 	InputOptions
-	Kind              ast.DefinitionKind `name:"kind" help:"Only list types of the given kind (interface, object, union, input_object, enum, scalar)."`
-	MemberOf          string             `name:"member-of" help:"Only list types which are members of the given union."`
-	Implements        string             `name:"implements" help:"Only list types which implement the given interface."`
-	IncludeDirectives bool               `name:"include-directives" help:"Include directives on each type in output."`
+	Kind       ast.DefinitionKind `name:"kind" help:"Only list types of the given kind (interface, object, union, input_object, enum, scalar)."`
+	MemberOf   string             `name:"member-of" help:"Only list types which are members of the given union."`
+	Implements string             `name:"implements" help:"Only list types which implement the given interface."`
+	IncludeDirectivesOption
 	FilteringOptions
 	OutputOptions
 	GraphFilteringOptions

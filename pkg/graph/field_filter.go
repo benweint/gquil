@@ -64,10 +64,6 @@ func (f *fieldFilter) allowField(fieldName string) {
 	f.includeFields[fieldName] = true
 }
 
-func (f *fieldFilter) allowAllFields() {
-	f.includeAll = true
-}
-
 func (f *fieldFilter) filterFieldList(fields model.FieldDefinitionList) model.FieldDefinitionList {
 	if f.includeAll {
 		return fields

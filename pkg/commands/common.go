@@ -9,6 +9,10 @@ type FilteringOptions struct {
 	IncludeBuiltins bool `name:"include-builtins" help:"Include built-in types and directives (they're omitted by default)."`
 }
 
+type IncludeDirectivesOption struct {
+	IncludeDirectives bool `name:"include-directives" help:"Include applied directives in human-readable output. Has no effect with --json."`
+}
+
 type OutputOptions struct {
 	Json bool `name:"json" help:"Output results as JSON."`
 }
