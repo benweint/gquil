@@ -6,15 +6,25 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// Based on the __Field and __InputValue introspection types: https://spec.graphql.org/October2021/#sec-The-__Field-Type
+//
+// Notable differences from the spec:
+//   - __Field and __InputValue are represented here by a single merged type, where some fields are left blank when not
+//     applicable.
+//   - The directives field represents information about directives attached to a given field or input value, which is
+//     not present in the introspection schema.
+//   - As a result of the above, the deprecated and deprecationReason fields are omitted, since they would
+//     duplicate the content of the more generic directives field.
 type FieldDefinition struct {
 	Name         string                 `json:"name"`
 	Description  string                 `json:"description,omitempty"`
 	Type         *Type                  `json:"type"`
-	Arguments    ArgumentDefinitionList `json:"arguments,omitempty"`    // only for objects
-	DefaultValue Value                  `json:"defaultValue,omitempty"` // only for input objects
+	Arguments    ArgumentDefinitionList `json:"arguments,omitempty"`    // only for fields
+	DefaultValue Value                  `json:"defaultValue,omitempty"` // only for input values
 	Directives   DirectiveList          `json:"directives,omitempty"`
 }
 
+// FieldDefinitionList represents a set of fields definitions on the same object, interface, or input type.
 type FieldDefinitionList []*FieldDefinition
 
 func (fd *FieldDefinition) MarshalJSON() ([]byte, error) {

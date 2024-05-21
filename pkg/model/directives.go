@@ -3,6 +3,9 @@ package model
 import "github.com/vektah/gqlparser/v2/ast"
 
 // Directive represents a specific application site / instantiation of a directive.
+//
+// Note that this type does *not* appear in the GraphQL introspection schema, which lacks information
+// about most directive application sites (with the exception of @deprecated, which is special-cased).
 type Directive struct {
 	Name      string       `json:"name"`
 	Arguments ArgumentList `json:"arguments,omitempty"`
@@ -12,6 +15,7 @@ type Directive struct {
 type DirectiveList []*Directive
 
 // DirectiveDefinition represents the definition of a directive.
+// Based on the __Directive introspection type defined here: https://spec.graphql.org/October2021/#sec-The-__Directive-Type
 type DirectiveDefinition struct {
 	Description  string                  `json:"description"`
 	Name         string                  `json:"name"`

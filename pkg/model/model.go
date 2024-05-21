@@ -4,11 +4,20 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// Based on the __Schema introspection type: https://spec.graphql.org/October2021/#sec-The-__Schema-Type
+//
+// The QueryType, MutationType, and SubscriptionType fields have been suffixed with 'Name' and
+// are represented as strings referring to named types, rather than nested objects.
 type Schema struct {
-	Types      DefinitionList          `json:"types"`
-	Directives DirectiveDefinitionList `json:"directives"`
+	Description          string                  `json:"description,omitempty"`
+	Types                DefinitionList          `json:"types"`
+	QueryTypeName        string                  `json:"queryTypeName"`
+	MutationTypeName     string                  `json:"mutationTypeName,omitempty"`
+	SubscriptionTypeName string                  `json:"subscriptionTypeName,omitempty"`
+	Directives           DirectiveDefinitionList `json:"directives,omitempty"`
 }
 
+// Based on the __Type introspection type: https://spec.graphql.org/October2021/#sec-The-__Type-Type
 type Definition struct {
 	Kind        ast.DefinitionKind `json:"kind"`
 	Name        string             `json:"name"`
@@ -88,9 +97,20 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 	}
 
 	return &Schema{
-		Types:      types,
-		Directives: directives,
+		Description:          in.Description,
+		Types:                types,
+		QueryTypeName:        in.Query.Name,
+		MutationTypeName:     maybeTypeName(in.Mutation),
+		SubscriptionTypeName: maybeTypeName(in.Subscription),
+		Directives:           directives,
 	}, nil
+}
+
+func maybeTypeName(in *ast.Definition) string {
+	if in == nil {
+		return ""
+	}
+	return in.Name
 }
 
 func resolveTypeKinds(typesByName map[string]*Definition, t *Type) {

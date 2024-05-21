@@ -7,19 +7,26 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// IsBuiltinDirective returns true if the given directive name is one of the
+// built-in directives specified here: https://spec.graphql.org/October2021/#sec-Type-System.Directives.Built-in-Directives
+//
+// @defer is also counted as built-in, despite not appearing in the spec, because it is included in the prelude used by the
+// GraphQL parsing library we're using here: https://github.com/vektah/gqlparser/blob/master/validator/prelude.graphql
 func IsBuiltinDirective(name string) bool {
 	builtinDirectives := []string{
-		"if",
 		"skip",
 		"include",
 		"deprecated",
 		"specifiedBy",
-		"defer",
+		"defer", // not specified, but in the gqlparser prelude
 	}
 
 	return slices.Contains(builtinDirectives, name)
 }
 
+// IsBuiltinType returns true if the given type name is either a reserved name
+// (see https://spec.graphql.org/October2021/#sec-Names.Reserved-Names) or one of the specified
+// scalar types in the GraphQL spec here: https://spec.graphql.org/October2021/#sec-Scalars.Built-in-Scalars
 func IsBuiltinType(name string) bool {
 	if strings.HasPrefix(name, "__") {
 		return true
@@ -32,6 +39,7 @@ func IsBuiltinType(name string) bool {
 	return false
 }
 
+// FilterBuiltins accepts and mutates an *ast.Schema to remove all built-in types and directives.
 func FilterBuiltins(s *ast.Schema) {
 	s.Types = filterBuiltinTypes(s.Types)
 	s.Directives = filterBuiltinDirectives(s.Directives)
