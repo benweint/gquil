@@ -8,7 +8,7 @@ import (
 )
 
 type IntrospectionCmd struct {
-	GenerateSDL GenerateSDLCmd `cmd:"" help:"Generate GraphQL SDL from a GraphQL introspection endpoint over HTTP."`
+	GenerateSDL GenerateSDLCmd `cmd:"" help:"Generate GraphQL SDL from a GraphQL introspection endpoint over HTTP(S)."`
 	Query       EmitQueryCmd   `cmd:"" help:"Emit the GraphQL query used for introspection."`
 }
 

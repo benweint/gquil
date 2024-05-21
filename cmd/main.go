@@ -5,16 +5,14 @@ import (
 	"github.com/benweint/gquilt/pkg/commands"
 )
 
-var cli struct {
-	Ls            commands.LsCmd            `cmd:"" help:"List types, fields, or directives in an SDL document."`
-	Merge         commands.MergeCmd         `cmd:"" help:"Merge multiple SDL documents into a single one."`
-	Json          commands.JsonCmd          `cmd:"" help:"Return a JSON representation of an SDL document."`
-	Introspection commands.IntrospectionCmd `cmd:"" help:"Interact with a GraphQL introspection endpoint over HTTP."`
-	Viz           commands.VizCmd           `cmd:"" help:"Visualize schema as a GraphViz dot file."`
-}
-
 func main() {
-	ctx := kong.Parse(&cli)
+	var cli commands.CLI
+	ctx := kong.Parse(&cli,
+		kong.Name("gquilt"),
+		kong.Description("Interrogate and visualize GraphQL schemas."),
+		kong.UsageOnError(),
+		kong.ExplicitGroups(commands.Groups),
+	)
 	err := ctx.Run()
 	ctx.FatalIfErrorf(err)
 }

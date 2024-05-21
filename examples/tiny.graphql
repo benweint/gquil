@@ -18,18 +18,3 @@ type D {
 type E {
     x: String
 }
-
-type ImageRendition {
-	width: Int!
-	url: String!
-	name: String!
-	height: Int!
-	format: ImageFormat!
-}
-
-enum ImageFormat {
-	NOT_SET
-	JPG
-	PNG
-	GIF
-}

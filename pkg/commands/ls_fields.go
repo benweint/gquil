@@ -12,9 +12,9 @@ import (
 
 type LsFieldsCmd struct {
 	InputOptions
-	OnType      string `name:"on-type"` // TODO help
-	OfType      string `name:"of-type"` // TODO help
-	IncludeArgs bool   `name:"include-args" help:"Include argument definitions in human-readable output. Has no effect with --json."`
+	OnType      string `name:"on-type" group:"filtering" help:"Only include fields which appear on the specified type."`
+	OfType      string `name:"of-type" group:"filtering" help:"Only include fields of the specified type. List and non-null types will be treated as being of their underlying wrapped type for the purposes of this filtering."` // TODO help
+	IncludeArgs bool   `name:"include-args" group:"output" help:"Include argument definitions in human-readable output. Has no effect with --json."`
 	IncludeDirectivesOption
 	OutputOptions
 	FilteringOptions
