@@ -1,17 +1,1 @@
-- [ ] Fetch some example schemas
-- [ ] Reimplement 'ls' subcommand
-
-## ls command
-
-`gquil ls types`
-`gquil ls directives`
-
-Types are:
-
-- scalars
-- objects
-- interfaces
-- unions
-- enums
-- inputs
-
+- [ ] Better error handling when an unknown field/type is given for --from
