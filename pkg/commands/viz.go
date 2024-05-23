@@ -7,7 +7,6 @@ import (
 )
 
 type VizCmd struct {
-	// TODO: should not include json flag
 	InputOptions
 	FilteringOptions
 	GraphFilteringOptions
