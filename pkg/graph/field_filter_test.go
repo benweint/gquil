@@ -181,7 +181,7 @@ func TestApplyFieldFilters(t *testing.T) {
 					actualFieldNames = append(actualFieldNames, fieldName)
 				}
 			}
-			sort.Sort(sort.StringSlice(actualFieldNames))
+			sort.Strings(actualFieldNames)
 
 			assert.Equal(t, tc.expectedFields, actualFieldNames)
 		})
