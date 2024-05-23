@@ -103,7 +103,7 @@ type Continent {
 This is particularly useful in combination with other the `gquil` subcommands described above. For example, to list all fields in a GraphQL API, you can combine the `introspection generate-sdl` and `ls fields` subcommands:
 
 ```
-❯ gquil introspection generate-sdl https://countries.trevorblades.com | gquil ./cmd/main.go ls fields -
+❯ gquil introspection generate-sdl https://countries.trevorblades.com | gquil ls fields -
 Continent.code: ID!
 Continent.countries: [Country!]!
 Continent.name: String!
