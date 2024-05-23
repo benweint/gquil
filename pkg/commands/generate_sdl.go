@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -12,7 +13,9 @@ import (
 
 type GenerateSDLCmd struct {
 	Endpoint string   `arg:"" help:"The GraphQL introspection endpoint URL to fetch from."`
-	Headers  []string `name:"header" short:"H" help:"Set headers on the introspection request."`
+	Headers  []string `name:"header" short:"H" help:"Set headers on the introspection request. Format: <key>: <value>."`
+	Trace    bool     `name:"trace" help:"Dump the introspection HTTP request and response to stderr for debugging."`
+	SpecVersionOptions
 	FilteringOptions
 }
 
@@ -24,7 +27,17 @@ If your GraphQL endpoint requires authentication, you can set custom headers on 
 }
 
 func (c *GenerateSDLCmd) Run() error {
-	client := introspection.NewClient(c.Endpoint, parseHeaders(c.Headers))
+	sv, err := introspection.ParseSpecVersion(c.SpecVersion)
+	if err != nil {
+		return err
+	}
+
+	var traceOut io.Writer
+	if c.Trace {
+		traceOut = os.Stderr
+	}
+
+	client := introspection.NewClient(c.Endpoint, parseHeaders(c.Headers), sv, traceOut)
 	s, err := client.FetchSchemaAst()
 	if err != nil {
 		return err
@@ -45,7 +58,7 @@ func parseHeaders(raw []string) http.Header {
 	for _, rawHeader := range raw {
 		parts := strings.SplitN(rawHeader, ":", 2)
 		key := parts[0]
-		value := parts[1]
+		value := strings.TrimLeft(parts[1], " ")
 		result[key] = append(result[key], value)
 	}
 	return result

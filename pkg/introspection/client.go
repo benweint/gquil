@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"strings"
 
 	"github.com/benweint/gquil/pkg/model"
@@ -14,8 +15,10 @@ import (
 )
 
 type Client struct {
-	endpoint string
-	headers  http.Header
+	endpoint    string
+	headers     http.Header
+	specVersion SpecVersion
+	traceOut    io.Writer
 }
 
 type GraphQLParams struct {
@@ -38,7 +41,7 @@ type graphQLError struct {
 	Path []string `json:"path"`
 }
 
-func NewClient(endpoint string, headers http.Header) *Client {
+func NewClient(endpoint string, headers http.Header, specVersion SpecVersion, traceOut io.Writer) *Client {
 	mergedHeaders := http.Header{
 		"content-type": []string{
 			"application/json",
@@ -50,8 +53,10 @@ func NewClient(endpoint string, headers http.Header) *Client {
 	}
 
 	return &Client{
-		endpoint: endpoint,
-		headers:  mergedHeaders,
+		endpoint:    endpoint,
+		headers:     mergedHeaders,
+		specVersion: specVersion,
+		traceOut:    traceOut,
 	}
 }
 
@@ -73,7 +78,7 @@ func (c *Client) FetchSchemaModel() (*model.Schema, error) {
 }
 
 func (c *Client) fetchSchema() (*Schema, error) {
-	rsp, err := c.issueQuery(Query, nil, "IntrospectionQuery")
+	rsp, err := c.issueQuery(GetQuery(c.specVersion), nil, "IntrospectionQuery")
 	if err != nil {
 		return nil, err
 	}
@@ -122,12 +127,28 @@ func (c *Client) issueQuery(query string, vars map[string]any, operation string)
 		}
 	}
 
+	if c.traceOut != nil {
+		requestDump, err := httputil.DumpRequestOut(req, true)
+		if err != nil {
+			return nil, fmt.Errorf("failed to dump introspection HTTP request: %w", err)
+		}
+		fmt.Fprintf(c.traceOut, "---\nIntrospection request:\n%s\n", string(requestDump))
+	}
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send introspection request to %s: %w", c.endpoint, err)
 	}
 	defer resp.Body.Close()
+
+	if c.traceOut != nil {
+		rspDump, err := httputil.DumpResponse(resp, true)
+		if err != nil {
+			return nil, fmt.Errorf("failed to dump introspection HTTP response: %w", err)
+		}
+		fmt.Fprintf(c.traceOut, "\n---\nIntrospection response:\n%s\n", string(rspDump))
+	}
 
 	rspBody, err := io.ReadAll(resp.Body)
 	if err != nil {

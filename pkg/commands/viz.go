@@ -9,6 +9,7 @@ import (
 type VizCmd struct {
 	// TODO: should not include json flag
 	InputOptions
+	FilteringOptions
 	GraphFilteringOptions
 	InterfacesAsUnions bool `name:"interfaces-as-unions" help:"Treat interfaces as unions rather than objects for the purposes of graph construction."`
 }

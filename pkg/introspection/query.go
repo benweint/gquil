@@ -1,9 +1,14 @@
 package introspection
 
-const Query = `
+import (
+	"bytes"
+	"text/template"
+)
+
+const QueryTemplate = `
 query IntrospectionQuery {
   __schema {
-    description
+    {{ if eq .HasSchemaDescription true }}description{{end}}
     queryType {
       name
     }
@@ -23,7 +28,7 @@ query IntrospectionQuery {
       args {
         ...InputValue
       }
-      isRepeatable
+      {{ if eq .HasIsRepeatable true }}isRepeatable{{end}}
     }
   }
 }
@@ -59,6 +64,7 @@ fragment FullType on __Type {
   possibleTypes {
     ...TypeRef
   }
+  {{ if eq .HasSpecifiedByURL true }}specifiedByURL{{end}}
 }
 
 fragment InputValue on __InputValue {
@@ -103,3 +109,18 @@ fragment TypeRef on __Type {
   }
 }
 `
+
+func GetQuery(sv SpecVersion) string {
+	t, err := template.New("QueryTemplate").Parse(QueryTemplate)
+	if err != nil {
+		panic(err)
+	}
+
+	var buf bytes.Buffer
+	err = t.Execute(&buf, sv)
+	if err != nil {
+		panic(err)
+	}
+
+	return buf.String()
+}

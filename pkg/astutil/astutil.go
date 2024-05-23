@@ -39,6 +39,10 @@ func IsBuiltinType(name string) bool {
 	return false
 }
 
+func IsBuiltinField(name string) bool {
+	return strings.HasPrefix(name, "__")
+}
+
 // FilterBuiltins accepts and mutates an *ast.Schema to remove all built-in types and directives.
 func FilterBuiltins(s *ast.Schema) {
 	s.Types = filterBuiltinTypes(s.Types)

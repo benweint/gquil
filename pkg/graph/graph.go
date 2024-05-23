@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/benweint/gquil/pkg/astutil"
 	"github.com/benweint/gquil/pkg/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -12,6 +13,7 @@ type Graph struct {
 	nodes              map[string]*Node
 	edges              map[string][]*Edge
 	interfacesAsUnions bool
+	renderBuiltins     bool
 	opts               []GraphOption
 }
 
@@ -57,6 +59,12 @@ type GraphOption func(g *Graph)
 func WithInterfacesAsUnions() GraphOption {
 	return func(g *Graph) {
 		g.interfacesAsUnions = true
+	}
+}
+
+func WithBuiltins(renderBuiltins bool) GraphOption {
+	return func(g *Graph) {
+		g.renderBuiltins = renderBuiltins
 	}
 }
 
@@ -233,6 +241,9 @@ func (g *Graph) ReachableFrom(roots []string, maxDepth int) *Graph {
 func (g *Graph) ToDot() string {
 	var nodeDefs []string
 	for _, node := range g.nodes {
+		if astutil.IsBuiltinType(node.Name) && !g.renderBuiltins {
+			continue
+		}
 		nodeDef := fmt.Sprintf("  %s [shape=plain, label=<%s>]", node.ID(), g.makeNodeLabel(node))
 		nodeDefs = append(nodeDefs, nodeDef)
 	}
@@ -249,6 +260,15 @@ func (g *Graph) buildEdgeDefs() []string {
 		for _, edge := range edges {
 			srcPortSuffix := ""
 			dstPortSuffix := ":main"
+
+			if !g.renderBuiltins {
+				if astutil.IsBuiltinType(edge.src.Name) {
+					continue
+				}
+				if edge.field != nil && astutil.IsBuiltinField(edge.field.Name) {
+					continue
+				}
+			}
 
 			switch edge.kind {
 			case EdgeKindField:
