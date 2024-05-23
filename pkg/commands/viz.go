@@ -25,6 +25,10 @@ func (c *VizCmd) Run() error {
 		opts = append(opts, graph.WithInterfacesAsUnions())
 	}
 
+	if c.IncludeBuiltins {
+		opts = append(opts, graph.WithBuiltins(true))
+	}
+
 	g := graph.MakeGraph(s.Types, opts...)
 
 	if len(c.From) > 0 {

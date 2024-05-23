@@ -291,7 +291,7 @@ func (g *Graph) buildEdgeDefs() []string {
 func (g *Graph) makeNodeLabel(node *Node) string {
 	switch normalizeKind(node.Kind, g.interfacesAsUnions) {
 	case ast.Object:
-		return makeFieldTableNodeLabel(node)
+		return g.makeFieldTableNodeLabel(node)
 	case ast.InputObject:
 		return makeInputObjectNodeLabel(node)
 	case ast.Enum:
@@ -349,10 +349,13 @@ func makePolymorphicLabel(node *Node) string {
 	return result
 }
 
-func makeFieldTableNodeLabel(node *Node) string {
+func (g *Graph) makeFieldTableNodeLabel(node *Node) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="%s">%s %s</TD></TR>`+"\n", colorForKind(node.Kind), strings.ToLower(string(node.Kind)), node.Name)
 	for _, field := range node.Fields {
+		if !g.renderBuiltins && astutil.IsBuiltinField(field.Name) {
+			continue
+		}
 		args := field.Arguments
 		result += fmt.Sprintf(`    <TR><TD ROWSPAN="%d">%s</TD><TD COLSPAN="2" PORT="%s">%s</TD></TR>`+"\n", len(args)+1, field.Name, portName(field.Name), field.Type.String())
 		for _, arg := range args {
