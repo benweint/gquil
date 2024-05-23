@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
@@ -43,11 +44,72 @@ type Definition struct {
 	EnumValues EnumValueList `json:"enumValues,omitempty"`
 }
 
+func (d *Definition) String() string {
+	return fmt.Sprintf("Def{name=%s, kind=%s}", d.Name, d.Kind)
+}
+
 type DefinitionList []*Definition
 
 func (s *Schema) FilterBuiltins() {
 	s.Types = filterBuiltinTypes(s.Types)
 	s.Directives = filterBuiltinDirectives(s.Directives)
+}
+
+func (s *Schema) ResolveNames(names []string) ([]*NameReference, error) {
+	var roots []*NameReference
+	var badNames []string
+	for _, rootName := range names {
+		root := s.ResolveName(rootName)
+		if root == nil {
+			badNames = append(badNames, rootName)
+		} else {
+			roots = append(roots, root)
+		}
+	}
+
+	if len(badNames) > 0 {
+		return nil, fmt.Errorf("unknown name(s): %s", strings.Join(badNames, ", "))
+	}
+
+	return roots, nil
+}
+
+func (s *Schema) ResolveName(name string) *NameReference {
+	parts := strings.SplitN(name, ".", 2)
+	typePart := parts[0]
+	for _, def := range s.Types {
+		if def.Name == typePart {
+			if len(parts) == 1 {
+				return &NameReference{
+					Kind:    TypeNameReference,
+					typeRef: def,
+				}
+			}
+
+			fieldPart := parts[1]
+			for _, field := range def.Fields {
+				if field.Name == fieldPart {
+					return &NameReference{
+						Kind:    FieldNameReference,
+						typeRef: def,
+						field:   field,
+					}
+				}
+			}
+
+			for _, field := range def.InputFields {
+				if field.Name == fieldPart {
+					return &NameReference{
+						Kind:       InputFieldNameReference,
+						typeRef:    def,
+						inputField: field,
+					}
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
 func MakeSchema(in *ast.Schema) (*Schema, error) {

@@ -148,9 +148,27 @@ func TestApplyFieldFilters(t *testing.T) {
 				"InputA.b",
 			},
 		},
+		{
+			name: "type and then field",
+			defs: exampleDefs,
+			roots: []string{
+				"Alpha",
+				"Alpha.x",
+			},
+			expectedFields: []string{
+				"Alpha.x",
+				"Alpha.y",
+				"Alpha.z",
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			filtered := applyFieldFilters(exampleDefs, tc.roots)
+			s := &model.Schema{
+				Types: exampleDefs,
+			}
+			roots, err := s.ResolveNames(tc.roots)
+			assert.NoError(t, err)
+			filtered := applyFieldFilters(exampleDefs, roots)
 
 			var actualFieldNames []string
 			for _, def := range filtered {

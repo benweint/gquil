@@ -6,7 +6,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/benweint/gquil/pkg/graph"
 	"github.com/benweint/gquil/pkg/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -28,9 +27,8 @@ func (c LsTypesCmd) Run() error {
 		return err
 	}
 
-	if len(c.From) > 0 {
-		g := graph.MakeGraph(s.Types).ReachableFrom(c.From, c.Depth)
-		s.Types = g.GetDefinitions()
+	if err = c.filterSchema(s); err != nil {
+		return err
 	}
 
 	if !c.IncludeBuiltins {

@@ -3,8 +3,6 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/benweint/gquil/pkg/graph"
 )
 
 type JsonCmd struct {
@@ -30,9 +28,8 @@ func (c *JsonCmd) Run() error {
 		return err
 	}
 
-	if len(c.From) > 0 {
-		g := graph.MakeGraph(s.Types).ReachableFrom(c.From, c.Depth)
-		s.Types = g.GetDefinitions()
+	if err = c.filterSchema(s); err != nil {
+		return err
 	}
 
 	if !c.IncludeBuiltins {

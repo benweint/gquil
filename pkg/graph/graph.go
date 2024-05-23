@@ -149,7 +149,7 @@ func (g *Graph) GetDefinitions() model.DefinitionList {
 	return result
 }
 
-func (g *Graph) ReachableFrom(roots []string, maxDepth int) *Graph {
+func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph {
 	var defs model.DefinitionList
 	defMap := map[string]*model.Definition{}
 

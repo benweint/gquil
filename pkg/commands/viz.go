@@ -31,7 +31,11 @@ func (c *VizCmd) Run() error {
 	g := graph.MakeGraph(s.Types, opts...)
 
 	if len(c.From) > 0 {
-		g = g.ReachableFrom(c.From, c.Depth)
+		roots, err := s.ResolveNames(c.From)
+		if err != nil {
+			return err
+		}
+		g = g.ReachableFrom(roots, c.Depth)
 	}
 
 	fmt.Print(g.ToDot())

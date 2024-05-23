@@ -1,1 +1,2 @@
-- [ ] Better error handling when an unknown field/type is given for --from
+- [ ] high level test coverage
+- [ ] finish README

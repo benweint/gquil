@@ -1,32 +1,29 @@
 package graph
 
 import (
-	"strings"
-
 	"github.com/benweint/gquil/pkg/model"
 )
 
-func parseFilter(root string) *fieldFilter {
-	parts := strings.SplitN(root, ".", 2)
-	if len(parts) == 1 {
-		return &fieldFilter{
-			onType:     parts[0],
-			includeAll: true,
-		}
+func makeFilter(root *model.NameReference) *fieldFilter {
+	result := &fieldFilter{
+		onType:        root.GetTargetType().Name,
+		includeFields: map[string]bool{},
 	}
 
-	return &fieldFilter{
-		onType: parts[0],
-		includeFields: map[string]bool{
-			parts[1]: true,
-		},
+	switch root.Kind {
+	case model.TypeNameReference:
+		result.includeAll = true
+	case model.FieldNameReference, model.InputFieldNameReference:
+		result.includeFields[root.GetFieldName()] = true
 	}
+
+	return result
 }
 
-func makeFieldFilters(roots []string) map[string]*fieldFilter {
+func makeFieldFilters(roots []*model.NameReference) map[string]*fieldFilter {
 	filtersByType := map[string]*fieldFilter{}
 	for _, root := range roots {
-		filter := parseFilter(root)
+		filter := makeFilter(root)
 		if existingFilter, ok := filtersByType[filter.onType]; ok {
 			existingFilter.merge(filter)
 		} else {
@@ -36,7 +33,7 @@ func makeFieldFilters(roots []string) map[string]*fieldFilter {
 	return filtersByType
 }
 
-func applyFieldFilters(defs model.DefinitionList, roots []string) model.DefinitionList {
+func applyFieldFilters(defs model.DefinitionList, roots []*model.NameReference) model.DefinitionList {
 	var result model.DefinitionList
 	filters := makeFieldFilters(roots)
 
