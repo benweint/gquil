@@ -115,7 +115,7 @@ Country.awsRegion: String!
 
 #### Adding extra headers
 
-Some GraphQL APIs require authentication, usually passed via HTTP headers. You can attach additional headers to the introspection HTTP request via the `--headers` flag to `generate-sdl`.
+Some GraphQL APIs require authentication, usually passed via HTTP headers. You can attach additional headers to the introspection HTTP request via the `--header` flag to `generate-sdl`.
 
 ### Merging multiple GraphQL SDL files
 
