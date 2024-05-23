@@ -35,7 +35,7 @@ Real GraphQL schemas tend to have a lot of types with a lot of fields, which can
 
 It produces:
 
-TODO
+![A graph visualization of github.graphql, trimmed to only showing 3 levels of depth from the User.projects entrypoint](./examples/images/user-projects.png)
 
 ### Listing types, fields, and directives
 
