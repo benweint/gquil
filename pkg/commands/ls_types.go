@@ -11,9 +11,6 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-type ObjectFilteringOptions struct {
-}
-
 type LsTypesCmd struct {
 	InputOptions
 	Kind       ast.DefinitionKind `name:"kind" group:"filtering" help:"Only list types of the given kind (interface, object, union, input_object, enum, scalar)."`
