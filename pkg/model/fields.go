@@ -27,6 +27,10 @@ type FieldDefinition struct {
 // FieldDefinitionList represents a set of fields definitions on the same object, interface, or input type.
 type FieldDefinitionList []*FieldDefinition
 
+func (fd *FieldDefinition) FieldName() string {
+	return fd.Name
+}
+
 func (fd *FieldDefinition) MarshalJSON() ([]byte, error) {
 	m := map[string]any{
 		"name":               fd.Name,

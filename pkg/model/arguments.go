@@ -24,6 +24,10 @@ type Argument struct {
 	Value Value  `json:"value"`
 }
 
+func (a *InputValueDefinition) FieldName() string {
+	return a.Name
+}
+
 func (a *InputValueDefinition) MarshalJSON() ([]byte, error) {
 	m := map[string]any{
 		"name":               a.Name,

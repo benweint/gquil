@@ -6,31 +6,38 @@ import (
 	"github.com/benweint/gquil/pkg/model"
 )
 
+func parseFilter(root string) *fieldFilter {
+	parts := strings.SplitN(root, ".", 2)
+	if len(parts) == 1 {
+		return &fieldFilter{
+			onType:     parts[0],
+			includeAll: true,
+		}
+	}
+
+	return &fieldFilter{
+		onType: parts[0],
+		includeFields: map[string]bool{
+			parts[1]: true,
+		},
+	}
+}
+
 func makeFieldFilters(roots []string) map[string]*fieldFilter {
 	filtersByType := map[string]*fieldFilter{}
 	for _, root := range roots {
-		nameParts := strings.SplitN(root, ".", 2)
-		typePart := nameParts[0]
-		if len(nameParts) == 1 {
-			filtersByType[typePart] = makeFieldFilter(typePart, true)
-			continue
+		filter := parseFilter(root)
+		if existingFilter, ok := filtersByType[filter.onType]; ok {
+			existingFilter.merge(filter)
+		} else {
+			filtersByType[filter.onType] = filter
 		}
-
-		fieldPart := nameParts[1]
-		filter, ok := filtersByType[typePart]
-		if !ok {
-			filter = makeFieldFilter(typePart, false)
-			filtersByType[typePart] = filter
-		}
-
-		filter.allowField(fieldPart)
 	}
-
 	return filtersByType
 }
 
 func applyFieldFilters(defs model.DefinitionList, roots []string) model.DefinitionList {
-	var selected model.DefinitionList
+	var result model.DefinitionList
 	filters := makeFieldFilters(roots)
 
 	for _, typeDef := range defs {
@@ -39,11 +46,21 @@ func applyFieldFilters(defs model.DefinitionList, roots []string) model.Definiti
 			continue
 		}
 
-		selected = append(selected, typeDef)
-		typeDef.Fields = filter.filterFieldList(typeDef.Fields)
+		filteredDef := &model.Definition{
+			Kind:          typeDef.Kind,
+			Name:          typeDef.Name,
+			Description:   typeDef.Description,
+			Interfaces:    typeDef.Interfaces,
+			PossibleTypes: typeDef.PossibleTypes,
+			EnumValues:    typeDef.EnumValues,
+			Fields:        applyFilter(filter, typeDef.Fields),
+			InputFields:   applyFilter(filter, typeDef.InputFields),
+		}
+
+		result = append(result, filteredDef)
 	}
 
-	return selected
+	return result
 }
 
 type fieldFilter struct {
@@ -52,26 +69,29 @@ type fieldFilter struct {
 	includeFields map[string]bool
 }
 
-func makeFieldFilter(typeName string, includeAll bool) *fieldFilter {
-	return &fieldFilter{
-		onType:        typeName,
-		includeAll:    includeAll,
-		includeFields: map[string]bool{},
+type fieldLike interface {
+	FieldName() string
+}
+
+func (f *fieldFilter) merge(other *fieldFilter) {
+	if other.includeAll {
+		f.includeAll = true
+		return
+	}
+
+	for field := range other.includeFields {
+		f.includeFields[field] = true
 	}
 }
 
-func (f *fieldFilter) allowField(fieldName string) {
-	f.includeFields[fieldName] = true
-}
-
-func (f *fieldFilter) filterFieldList(fields model.FieldDefinitionList) model.FieldDefinitionList {
+func applyFilter[T fieldLike](f *fieldFilter, list []T) []T {
 	if f.includeAll {
-		return fields
+		return list
 	}
 
-	var result model.FieldDefinitionList
-	for _, field := range fields {
-		if f.includeFields[field.Name] {
+	var result []T
+	for _, field := range list {
+		if f.includeFields[field.FieldName()] {
 			result = append(result, field)
 		}
 	}
