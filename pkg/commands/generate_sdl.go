@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -8,6 +10,7 @@ import (
 
 	"github.com/benweint/gquil/pkg/astutil"
 	"github.com/benweint/gquil/pkg/introspection"
+	"github.com/benweint/gquil/pkg/model"
 	"github.com/vektah/gqlparser/v2/formatter"
 )
 
@@ -15,6 +18,8 @@ type GenerateSDLCmd struct {
 	Endpoint string   `arg:"" help:"The GraphQL introspection endpoint URL to fetch from."`
 	Headers  []string `name:"header" short:"H" help:"Set headers on the introspection request. Format: <key>: <value>."`
 	Trace    bool     `name:"trace" help:"Dump the introspection HTTP request and response to stderr for debugging."`
+
+	OutputOptions
 	SpecVersionOptions
 	FilteringOptions
 }
@@ -43,12 +48,29 @@ func (c *GenerateSDLCmd) Run() error {
 		return err
 	}
 
-	if !c.IncludeBuiltins {
-		astutil.FilterBuiltins(s)
-	}
+	if c.Json {
+		m, err := model.MakeSchema(s)
+		if err != nil {
+			return fmt.Errorf("failed to construct model from introspection schema AST: %w", err)
+		}
 
-	f := formatter.NewFormatter(os.Stdout)
-	f.FormatSchema(s)
+		if !c.IncludeBuiltins {
+			m.FilterBuiltins()
+		}
+
+		serialized, err := json.Marshal(m)
+		if err != nil {
+			return fmt.Errorf("failed to serialize schema to JSON: %w", err)
+		}
+		fmt.Print(string(serialized) + "\n")
+	} else {
+		if !c.IncludeBuiltins {
+			astutil.FilterBuiltins(s)
+		}
+
+		f := formatter.NewFormatter(os.Stdout)
+		f.FormatSchema(s)
+	}
 
 	return nil
 }
