@@ -23,7 +23,7 @@ You can visualize GraphQL schemas using the `viz` subcommand, by piping the outp
 
 Produces output like this:
 
-TODO
+![A graph visualization of the countries.graphql example schema](./examples/images/countries.png)
 
 #### Trimming the visualization
 
