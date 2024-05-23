@@ -5,7 +5,23 @@ import (
 	"text/template"
 )
 
-const QueryTemplate = `
+// GetQuery returns a GraphQL introspection query that is compatible with the given version
+// of the GraphQL spec.
+func GetQuery(sv SpecVersion) string {
+	t, err := template.New("QueryTemplate").Parse(queryTemplate)
+	if err != nil {
+		panic(err)
+	}
+
+	var buf bytes.Buffer
+	if err = t.Execute(&buf, sv); err != nil {
+		panic(err)
+	}
+
+	return buf.String()
+}
+
+const queryTemplate = `
 query IntrospectionQuery {
   __schema {
     {{ if eq .HasSchemaDescription true }}description{{end}}
@@ -109,18 +125,3 @@ fragment TypeRef on __Type {
   }
 }
 `
-
-func GetQuery(sv SpecVersion) string {
-	t, err := template.New("QueryTemplate").Parse(QueryTemplate)
-	if err != nil {
-		panic(err)
-	}
-
-	var buf bytes.Buffer
-	err = t.Execute(&buf, sv)
-	if err != nil {
-		panic(err)
-	}
-
-	return buf.String()
-}

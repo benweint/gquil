@@ -10,10 +10,11 @@ import (
 	"net/http/httputil"
 	"strings"
 
-	"github.com/benweint/gquil/pkg/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// Client is a client capable of issuing an introspection query against a GraphQL server over HTTP,
+// and transforming the response into either an *ast.Schema.
 type Client struct {
 	endpoint    string
 	headers     http.Header
@@ -41,6 +42,12 @@ type graphQLError struct {
 	Path []string `json:"path"`
 }
 
+// NewClient returns a new GraphQL introspection client.
+// HTTP requests issued by this client will use the given HTTP headers, in addition to some defaults.
+// The given SpecVersion will be used to ensure that the introspection query issued by the client is
+// compatible with a specific version of the GraphQL spec.
+// If traceOut is non-nil, the outbound request and returned response will be dumped to it for debugging
+// purposes.
 func NewClient(endpoint string, headers http.Header, specVersion SpecVersion, traceOut io.Writer) *Client {
 	mergedHeaders := http.Header{
 		"content-type": []string{
@@ -69,14 +76,6 @@ func (c *Client) FetchSchemaAst() (*ast.Schema, error) {
 	return responseToAst(rawSchema)
 }
 
-func (c *Client) FetchSchemaModel() (*model.Schema, error) {
-	schemaAst, err := c.FetchSchemaAst()
-	if err != nil {
-		return nil, err
-	}
-	return model.MakeSchema(schemaAst)
-}
-
 func (c *Client) fetchSchema() (*Schema, error) {
 	rsp, err := c.issueQuery(GetQuery(c.specVersion), nil, "IntrospectionQuery")
 	if err != nil {
@@ -98,7 +97,7 @@ func (c *Client) fetchSchema() (*Schema, error) {
 	var parsed IntrospectionQueryResult
 	err = json.Unmarshal(rsp.Data, &parsed)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to deserialize introspection query result: %w", err)
 	}
 
 	return &parsed.Schema, nil

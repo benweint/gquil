@@ -10,38 +10,11 @@ import (
 )
 
 type Graph struct {
-	nodes              map[string]*Node
-	edges              map[string][]*Edge
+	nodes              map[string]*node
+	edges              map[string][]*edge
 	interfacesAsUnions bool
 	renderBuiltins     bool
 	opts               []GraphOption
-}
-
-type Node struct {
-	*model.Definition
-}
-
-func (n *Node) ID() string {
-	return "n_" + n.Name
-}
-
-type EdgeKind int
-
-const (
-	EdgeKindField = iota
-	EdgeKindInputField
-	EdgeKindArgument
-	EdgeKindPossibleType
-)
-
-type Edge struct {
-	src          *Node
-	dst          *Node
-	kind         EdgeKind
-	field        *model.FieldDefinition
-	inputField   *model.InputValueDefinition
-	argument     *model.InputValueDefinition
-	possibleType string
 }
 
 func normalizeKind(kind ast.DefinitionKind, interfacesAsUnions bool) ast.DefinitionKind {
@@ -70,8 +43,8 @@ func WithBuiltins(renderBuiltins bool) GraphOption {
 
 func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 	g := &Graph{
-		nodes: map[string]*Node{},
-		edges: map[string][]*Edge{},
+		nodes: map[string]*node{},
+		edges: map[string][]*edge{},
 		opts:  opts,
 	}
 
@@ -80,13 +53,13 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 	}
 
 	for _, t := range defs {
-		g.nodes[t.Name] = &Node{
+		g.nodes[t.Name] = &node{
 			Definition: t,
 		}
 	}
 
 	for _, t := range defs {
-		var typeEdges []*Edge
+		var typeEdges []*edge
 		kind := normalizeKind(t.Kind, g.interfacesAsUnions)
 		switch kind {
 		case ast.Object:
@@ -101,13 +74,13 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 				if srcNode == nil || dstNode == nil {
 					continue
 				}
-				edge := &Edge{
+				e := &edge{
 					src:   srcNode,
 					dst:   dstNode,
-					kind:  EdgeKindField,
+					kind:  edgeKindField,
 					field: f,
 				}
-				typeEdges = append(typeEdges, edge)
+				typeEdges = append(typeEdges, e)
 
 				for _, arg := range f.Arguments {
 					targetType := arg.Type.Unwrap()
@@ -118,10 +91,10 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 					if dstNode == nil {
 						continue
 					}
-					typeEdges = append(typeEdges, &Edge{
+					typeEdges = append(typeEdges, &edge{
 						src:      srcNode,
 						dst:      g.nodes[targetType.Name],
-						kind:     EdgeKindArgument,
+						kind:     edgeKindArgument,
 						field:    f,
 						argument: arg,
 					})
@@ -139,10 +112,10 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 				if srcNode == nil || dstNode == nil {
 					continue
 				}
-				edge := &Edge{
+				edge := &edge{
 					src:        srcNode,
 					dst:        dstNode,
-					kind:       EdgeKindInputField,
+					kind:       edgeKindInputField,
 					inputField: f,
 				}
 				typeEdges = append(typeEdges, edge)
@@ -154,10 +127,10 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 				if srcNode == nil || dstNode == nil {
 					continue
 				}
-				typeEdges = append(typeEdges, &Edge{
+				typeEdges = append(typeEdges, &edge{
 					src:          srcNode,
 					dst:          dstNode,
-					kind:         EdgeKindPossibleType,
+					kind:         edgeKindPossibleType,
 					possibleType: pt,
 				})
 			}
@@ -271,13 +244,13 @@ func (g *Graph) buildEdgeDefs() []string {
 			}
 
 			switch edge.kind {
-			case EdgeKindField:
+			case edgeKindField:
 				srcPortSuffix = ":" + portName(edge.field.Name)
-			case EdgeKindInputField:
+			case edgeKindInputField:
 				srcPortSuffix = ":" + portName(edge.inputField.Name)
-			case EdgeKindArgument:
+			case edgeKindArgument:
 				srcPortSuffix = ":" + portNameForArgument(edge.field.Name, edge.argument.Name)
-			case EdgeKindPossibleType:
+			case edgeKindPossibleType:
 				srcPortSuffix = ":" + portName(edge.possibleType)
 			}
 
@@ -288,7 +261,7 @@ func (g *Graph) buildEdgeDefs() []string {
 	return result
 }
 
-func (g *Graph) makeNodeLabel(node *Node) string {
+func (g *Graph) makeNodeLabel(node *node) string {
 	switch normalizeKind(node.Kind, g.interfacesAsUnions) {
 	case ast.Object:
 		return g.makeFieldTableNodeLabel(node)
@@ -329,7 +302,7 @@ func portNameForArgument(fieldName, argName string) string {
 	return "p_" + fieldName + "_" + argName
 }
 
-func makeEnumLabel(node *Node) string {
+func makeEnumLabel(node *node) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`  <TR><TD PORT="main" BGCOLOR="%s">enum %s</TD></TR>`, colorForKind(node.Kind), node.Name)
 	for _, val := range node.EnumValues {
@@ -339,7 +312,7 @@ func makeEnumLabel(node *Node) string {
 	return result
 }
 
-func makePolymorphicLabel(node *Node) string {
+func makePolymorphicLabel(node *node) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`  <TR><TD PORT="main" BGCOLOR="%s">%s %s</TD></TR>`, colorForKind(node.Kind), strings.ToLower(string(node.Kind)), node.Name)
 	for _, possibleType := range node.PossibleTypes {
@@ -349,7 +322,7 @@ func makePolymorphicLabel(node *Node) string {
 	return result
 }
 
-func (g *Graph) makeFieldTableNodeLabel(node *Node) string {
+func (g *Graph) makeFieldTableNodeLabel(node *node) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="%s">%s %s</TD></TR>`+"\n", colorForKind(node.Kind), strings.ToLower(string(node.Kind)), node.Name)
 	for _, field := range node.Fields {
@@ -366,7 +339,7 @@ func (g *Graph) makeFieldTableNodeLabel(node *Node) string {
 	return result
 }
 
-func makeInputObjectNodeLabel(node *Node) string {
+func makeInputObjectNodeLabel(node *node) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`  <TR><TD COLSPAN="2" PORT="main" BGCOLOR="%s">input %s</TD></TR>`+"\n", colorForKind(node.Kind), node.Name)
 	for _, field := range node.InputFields {
@@ -376,6 +349,6 @@ func makeInputObjectNodeLabel(node *Node) string {
 	return result
 }
 
-func makeGenericNodeLabel(node *Node) string {
+func makeGenericNodeLabel(node *node) string {
 	return fmt.Sprintf("%s\n%s", strings.ToLower(string(node.Kind)), node.Name)
 }

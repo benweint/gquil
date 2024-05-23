@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// SpecVersion represents a version of the GraphQL specification.
+// Versions are listed at https://spec.graphql.org/
 type SpecVersion struct {
 	name                 string
 	HasSpecifiedByURL    bool

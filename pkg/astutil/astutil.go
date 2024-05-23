@@ -39,6 +39,7 @@ func IsBuiltinType(name string) bool {
 	return false
 }
 
+// IsBuiltinField returns true if the given field name is a reserved name (begins with '__').
 func IsBuiltinField(name string) bool {
 	return strings.HasPrefix(name, "__")
 }

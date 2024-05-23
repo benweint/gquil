@@ -6,6 +6,8 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
+// responseToAst converts a deserialized introspection query result into an *ast.Schema, which
+// may then either be printed to GraphQL SDL, or converted into a model.Schema for further processing.
 func responseToAst(s *Schema) (*ast.Schema, error) {
 	var defs ast.DefinitionList
 
@@ -100,7 +102,7 @@ func responseToAst(s *Schema) (*ast.Schema, error) {
 		Query:        typeMap[s.QueryType.Name],
 		Mutation:     typeMap[s.MutationType.Name],
 		Subscription: typeMap[s.SubscriptionType.Name],
-		// TODO: directives
+		Directives:   directiveMap,
 	}, nil
 }
 

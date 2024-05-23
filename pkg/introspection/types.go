@@ -1,5 +1,9 @@
 package introspection
 
+// The types in this file are used to deserialize the response from a GraphQL introspection query.
+// As such, they directly mirror the specified introspection schema described in the GraphQL spec
+// here: https://spec.graphql.org/October2021/#sec-Schema-Introspection.Schema-Introspection-Schema
+
 type IntrospectionQueryResult struct {
 	Schema Schema `json:"__schema"`
 }
