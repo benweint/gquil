@@ -33,13 +33,13 @@ jobs:
     - name: Build (linux amd64)
       run: go build -v -o gquil_linux_amd64 ./cmd/gquil.go
       env:
-        GOOS: darwin
+        GOOS: linux
         GOARCH: amd64
 
     - name: Build (linux arm64)
       run: go build -v -o gquil_linux_arm64 ./cmd/gquil.go
       env:
-        GOOS: darwin
+        GOOS: linux
         GOARCH: arm64
 
     - run: |
