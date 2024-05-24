@@ -11,6 +11,17 @@ It can output information about large GraphQL schemas in several forms:
 - GraphViz's [DOT language](https://graphviz.org/doc/info/lang.html) for visualization purposes (suitable for use with `dot`)
 - GraphQL SDL (suitable for feeding back into `gquil` itself, or using with other GraphQL-related tools)
 
+## Installation
+
+Pre-built binaries for macOS and Linux are published to [GitHub releases](https://github.com/benweint/gquil/releases).
+
+You can also install via Homebrew, using the formula hosted in this repo:
+
+```
+brew tap benweint/gquil https://github.com/benweint/gquil
+brew install gquil
+```
+
 ## Capabilities
 
 ### Visualizing schemas

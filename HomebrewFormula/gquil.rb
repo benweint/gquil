@@ -12,6 +12,10 @@ class Gquil < Formula
   end
 
   def install
-    bin.install "gquil"
+    if OS.mac?
+      bin.install "gquil_darwin_amd64" => "gquil"
+    elsif OS.linux?
+      bin.install "gquil_linux_amd64" => "gquil"
+    end
   end
 end
