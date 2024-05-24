@@ -1,2 +1,4 @@
 - [ ] high level test coverage
 - [ ] finish README
+- [ ] set up releases in GitHub
+- [ ] create homebrew formula / tap

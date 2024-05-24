@@ -9,7 +9,7 @@ func main() {
 	var cli commands.CLI
 	ctx := kong.Parse(&cli,
 		kong.Name("gquil"),
-		kong.Description("Interrogate and visualize GraphQL schemas."),
+		kong.Description("Inspect, visualize, and transform GraphQL schemas."),
 		kong.UsageOnError(),
 		kong.ExplicitGroups(commands.Groups),
 	)
