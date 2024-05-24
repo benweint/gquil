@@ -2,9 +2,7 @@
 
 `gquil` is a tool for introspecting GraphQL schemas on the command line.
 
-It is designed to help make large GraphQL schemas more easily navigable at the command line, and is intended to be used in conjunction with other CLI tools you already use.
-
-It can output information about large GraphQL schemas in several forms:
+It is designed to help make large GraphQL schemas more easily navigable, and is intended to be used in conjunction with other CLI tools you already use. It can output information about large GraphQL schemas in several forms:
 
 - A line-delimited format for lists of fields, types, and directives (suitable for direct inspection, or use with `grep`, `sort`, `awk`, etc.)
 - A JSON format (suitable for processing with tools like [`jq`](https://github.com/jqlang/jq))
