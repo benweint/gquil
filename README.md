@@ -119,4 +119,12 @@ Some GraphQL APIs require authentication, usually passed via HTTP headers. You c
 
 ### Merging multiple GraphQL SDL files
 
-TODO
+Sometimes, GraphQL schemas are split across multiple files. For this reason, most `gquil` subcommands accept any number of `.graphql` SDL files as input. However, sometimes it's useful to be able to merge together multiple GraphQL files in a normalized way. The `merge` subcommand allows you to do this:
+
+```
+❯ gquil merge examples/github.graphql examples/tiny.graphql
+```
+
+During the merging process, this command will ensure that there are no duplicate definitions, and that the merged result is actually a valid GraphQL SDL document, producing an error if it is not.
+
+The resulting GraphQL will have types and directives sorted by their names, making the output deterministic.
