@@ -42,7 +42,10 @@ jobs:
         GOOS: darwin
         GOARCH: arm64
 
+    - run: |
+        sha256sum gquil_* >checksums.txt
+
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "gquil_*"
+        artifacts: "gquil_*,checksums.txt"
