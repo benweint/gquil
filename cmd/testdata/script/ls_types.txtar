@@ -1,0 +1,59 @@
+exec gquil ls types in.graphql
+cmp stdout ls-types-expected.txt
+
+exec gquil ls fields in.graphql
+cmp stdout ls-fields-expected.txt
+
+exec gquil ls fields --of-type AppleVariety in.graphql
+cmp stdout ls-fields-applevariety-expected.txt
+
+-- in.graphql --
+type Apple implements Edible {
+    variety: AppleVariety
+    calories: Int
+}
+
+type Orange implements Edible {
+    variety: OrangeVariety
+    calories: Int
+}
+
+type Biscuit implements Edible {
+    calories: Int
+}
+
+interface Edible {
+    calories: Int
+}
+
+union Fruits = Apple | Orange
+
+enum AppleVariety {
+    FUJI
+    COSMIC_CRISP
+    GRANNY_SMITH
+}
+
+enum OrangeVariety {
+    VALENCIA
+    NAVEL
+    CARA_CARA
+}
+
+-- ls-types-expected.txt --
+OBJECT Apple
+ENUM AppleVariety
+OBJECT Biscuit
+INTERFACE Edible
+UNION Fruits
+OBJECT Orange
+ENUM OrangeVariety
+-- ls-fields-expected.txt --
+Apple.calories: Int
+Apple.variety: AppleVariety
+Biscuit.calories: Int
+Edible.calories: Int
+Orange.calories: Int
+Orange.variety: OrangeVariety
+-- ls-fields-applevariety-expected.txt --
+Apple.variety: AppleVariety

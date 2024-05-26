@@ -22,3 +22,6 @@
 
 - [ ] Ensure that schema parse / validation errors actually point back to the source location
 
+## Features
+
+- [ ] Add a --named arg to ls fields command

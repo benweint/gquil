@@ -85,7 +85,7 @@ func (c LsTypesCmd) Run() error {
 			if c.Kind != "" {
 				fmt.Printf("%s%s\n", t.Name, directives)
 			} else {
-				fmt.Printf("%s\t%s%s\n", t.Kind, t.Name, directives)
+				fmt.Printf("%s %s%s\n", t.Kind, t.Name, directives)
 			}
 		}
 	}
