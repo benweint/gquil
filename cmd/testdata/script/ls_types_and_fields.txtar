@@ -7,9 +7,13 @@ cmp stdout ls-fields-expected.txt
 exec gquil ls fields --of-type AppleVariety in.graphql
 cmp stdout ls-fields-applevariety-expected.txt
 
+exec gquil ls fields --from Apple.measurements in.graphql
+cmp stdout ls-fields-reachable-expected.txt
+
 -- in.graphql --
 type Apple implements Edible {
     variety: AppleVariety
+    measurements: Measurements
     calories: Int
 }
 
@@ -20,6 +24,12 @@ type Orange implements Edible {
 
 type Biscuit implements Edible {
     calories: Int
+}
+
+type Measurements {
+    height: Int
+    width: Int
+    depth: Int
 }
 
 interface Edible {
@@ -46,14 +56,24 @@ ENUM AppleVariety
 OBJECT Biscuit
 INTERFACE Edible
 UNION Fruits
+OBJECT Measurements
 OBJECT Orange
 ENUM OrangeVariety
 -- ls-fields-expected.txt --
 Apple.calories: Int
+Apple.measurements: Measurements
 Apple.variety: AppleVariety
 Biscuit.calories: Int
 Edible.calories: Int
+Measurements.depth: Int
+Measurements.height: Int
+Measurements.width: Int
 Orange.calories: Int
 Orange.variety: OrangeVariety
 -- ls-fields-applevariety-expected.txt --
 Apple.variety: AppleVariety
+-- ls-fields-reachable-expected.txt --
+Apple.measurements: Measurements
+Measurements.depth: Int
+Measurements.height: Int
+Measurements.width: Int
