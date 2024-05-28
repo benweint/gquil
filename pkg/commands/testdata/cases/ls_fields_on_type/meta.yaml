@@ -1,0 +1,1 @@
+args: ["ls", "fields", "--on-type", "Query", "testdata/in.graphql"]

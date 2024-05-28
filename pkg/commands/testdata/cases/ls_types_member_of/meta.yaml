@@ -1,0 +1,1 @@
+args: ["ls", "types", "--member-of", "Fruit", "testdata/in.graphql"]

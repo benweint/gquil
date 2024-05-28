@@ -1,0 +1,3 @@
+Query.edible(name: String): Edible
+Query.edibles(filter: Filter): [Edible!]!
+Query.fruit(name: String): Fruit

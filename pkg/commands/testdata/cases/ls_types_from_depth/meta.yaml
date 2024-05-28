@@ -1,0 +1,1 @@
+args: ["ls", "types", "--from", "Query.fruit", "--depth", "2", "testdata/in.graphql"]

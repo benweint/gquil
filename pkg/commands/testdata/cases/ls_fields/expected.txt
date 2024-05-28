@@ -1,0 +1,13 @@
+Apple.calories: Int
+Apple.measurements: Measurements
+Apple.variety: AppleVariety
+Biscuit.calories: Int
+Edible.calories: Int
+Measurements.depth: Int
+Measurements.height: Int
+Measurements.width: Int
+Orange.calories: Int
+Orange.variety: OrangeVariety
+Query.edible: Edible
+Query.edibles: [Edible!]!
+Query.fruit: Fruit

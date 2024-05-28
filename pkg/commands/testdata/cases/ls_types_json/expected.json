@@ -1,0 +1,273 @@
+[
+    {
+      "kind": "OBJECT",
+      "name": "Apple",
+      "fields": [
+        {
+          "name": "variety",
+          "type": {
+            "kind": "ENUM",
+            "name": "AppleVariety"
+          },
+          "typeName": "AppleVariety",
+          "underlyingTypeName": "AppleVariety"
+        },
+        {
+          "name": "measurements",
+          "type": {
+            "kind": "OBJECT",
+            "name": "Measurements"
+          },
+          "typeName": "Measurements",
+          "underlyingTypeName": "Measurements"
+        },
+        {
+          "name": "calories",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        }
+      ],
+      "interfaces": [
+        "Edible"
+      ]
+    },
+    {
+      "kind": "ENUM",
+      "name": "AppleVariety",
+      "enumValues": [
+        {
+          "name": "FUJI"
+        },
+        {
+          "name": "COSMIC_CRISP"
+        },
+        {
+          "name": "GRANNY_SMITH"
+        }
+      ]
+    },
+    {
+      "kind": "OBJECT",
+      "name": "Biscuit",
+      "fields": [
+        {
+          "name": "calories",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        }
+      ],
+      "interfaces": [
+        "Edible"
+      ]
+    },
+    {
+      "kind": "INTERFACE",
+      "name": "Edible",
+      "fields": [
+        {
+          "name": "calories",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        }
+      ],
+      "possibleTypeNames": [
+        "Apple",
+        "Orange",
+        "Biscuit"
+      ]
+    },
+    {
+        "kind": "INPUT_OBJECT",
+        "name": "Filter",
+        "inputFields": [
+          {
+            "name": "nameLike",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String"
+            },
+            "typeName": "String",
+            "underlyingTypeName": "String"
+          },
+          {
+            "name": "limit",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int"
+            },
+            "typeName": "Int",
+            "underlyingTypeName": "Int"
+          }
+        ]
+    },
+    {
+      "kind": "UNION",
+      "name": "Fruit",
+      "possibleTypeNames": [
+        "Apple",
+        "Orange"
+      ]
+    },
+    {
+      "kind": "OBJECT",
+      "name": "Measurements",
+      "fields": [
+        {
+          "name": "height",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        },
+        {
+          "name": "width",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        },
+        {
+          "name": "depth",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        }
+      ]
+    },
+    {
+      "kind": "OBJECT",
+      "name": "Orange",
+      "fields": [
+        {
+          "name": "variety",
+          "type": {
+            "kind": "ENUM",
+            "name": "OrangeVariety"
+          },
+          "typeName": "OrangeVariety",
+          "underlyingTypeName": "OrangeVariety"
+        },
+        {
+          "name": "calories",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        }
+      ],
+      "interfaces": [
+        "Edible"
+      ]
+    },
+    {
+      "kind": "ENUM",
+      "name": "OrangeVariety",
+      "enumValues": [
+        {
+          "name": "VALENCIA"
+        },
+        {
+          "name": "NAVEL"
+        },
+        {
+          "name": "CARA_CARA"
+        }
+      ]
+    },
+    {
+        "kind": "OBJECT",
+        "name": "Query",
+        "fields": [
+          {
+            "arguments": [
+              {
+                "name": "name",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String"
+                },
+                "typeName": "String",
+                "underlyingTypeName": "String"
+              }
+            ],
+            "name": "fruit",
+            "type": {
+              "kind": "UNION",
+              "name": "Fruit"
+            },
+            "typeName": "Fruit",
+            "underlyingTypeName": "Fruit"
+          },
+          {
+            "arguments": [
+              {
+                "name": "name",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String"
+                },
+                "typeName": "String",
+                "underlyingTypeName": "String"
+              }
+            ],
+            "name": "edible",
+            "type": {
+              "kind": "INTERFACE",
+              "name": "Edible"
+            },
+            "typeName": "Edible",
+            "underlyingTypeName": "Edible"
+          },
+          {
+            "arguments": [
+              {
+                "name": "filter",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "Filter"
+                },
+                "typeName": "Filter",
+                "underlyingTypeName": "Filter"
+              }
+            ],
+            "name": "edibles",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "INTERFACE",
+                    "name": "Edible"
+                  }
+                }
+              }
+            },
+            "typeName": "[Edible!]!",
+            "underlyingTypeName": "Edible"
+          }
+        ]
+      }
+  ]

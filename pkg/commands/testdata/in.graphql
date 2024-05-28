@@ -1,0 +1,49 @@
+type Query {
+    fruit(name: String): Fruit
+    edible(name: String): Edible
+    edibles(filter: Filter): [Edible!]!
+}
+
+input Filter {
+    nameLike: String
+    limit: Int
+}
+
+type Apple implements Edible {
+    variety: AppleVariety
+    measurements: Measurements
+    calories: Int
+}
+
+type Orange implements Edible {
+    variety: OrangeVariety
+    calories: Int
+}
+
+type Biscuit implements Edible {
+    calories: Int
+}
+
+type Measurements {
+    height: Int
+    width: Int
+    depth: Int
+}
+
+interface Edible {
+    calories: Int
+}
+
+union Fruit = Apple | Orange
+
+enum AppleVariety {
+    FUJI
+    COSMIC_CRISP
+    GRANNY_SMITH
+}
+
+enum OrangeVariety {
+    VALENCIA
+    NAVEL
+    CARA_CARA
+}
