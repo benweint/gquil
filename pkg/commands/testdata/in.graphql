@@ -1,3 +1,7 @@
+scalar FieldSet
+
+directive @key(fields: FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+
 type Query {
     fruit(name: String): Fruit
     edible(name: String): Edible

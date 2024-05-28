@@ -1,161 +1,161 @@
 [
-    {
-      "name": "Apple.calories",
-      "type": {
-        "kind": "SCALAR",
-        "name": "Int"
-      },
-      "typeName": "Int",
-      "underlyingTypeName": "Int"
+  {
+    "name": "Apple.calories",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
     },
-    {
-      "name": "Apple.measurements",
-      "type": {
-        "kind": "OBJECT",
-        "name": "Measurements"
-      },
-      "typeName": "Measurements",
-      "underlyingTypeName": "Measurements"
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Apple.measurements",
+    "type": {
+      "kind": "OBJECT",
+      "name": "Measurements"
     },
-    {
-      "name": "Apple.variety",
-      "type": {
-        "kind": "ENUM",
-        "name": "AppleVariety"
-      },
-      "typeName": "AppleVariety",
-      "underlyingTypeName": "AppleVariety"
+    "typeName": "Measurements",
+    "underlyingTypeName": "Measurements"
+  },
+  {
+    "name": "Apple.variety",
+    "type": {
+      "kind": "ENUM",
+      "name": "AppleVariety"
     },
-    {
-      "name": "Biscuit.calories",
-      "type": {
-        "kind": "SCALAR",
-        "name": "Int"
-      },
-      "typeName": "Int",
-      "underlyingTypeName": "Int"
+    "typeName": "AppleVariety",
+    "underlyingTypeName": "AppleVariety"
+  },
+  {
+    "name": "Biscuit.calories",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
     },
-    {
-      "name": "Edible.calories",
-      "type": {
-        "kind": "SCALAR",
-        "name": "Int"
-      },
-      "typeName": "Int",
-      "underlyingTypeName": "Int"
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Edible.calories",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
     },
-    {
-      "name": "Measurements.depth",
-      "type": {
-        "kind": "SCALAR",
-        "name": "Int"
-      },
-      "typeName": "Int",
-      "underlyingTypeName": "Int"
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Measurements.depth",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
     },
-    {
-      "name": "Measurements.height",
-      "type": {
-        "kind": "SCALAR",
-        "name": "Int"
-      },
-      "typeName": "Int",
-      "underlyingTypeName": "Int"
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Measurements.height",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
     },
-    {
-      "name": "Measurements.width",
-      "type": {
-        "kind": "SCALAR",
-        "name": "Int"
-      },
-      "typeName": "Int",
-      "underlyingTypeName": "Int"
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Measurements.width",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
     },
-    {
-      "name": "Orange.calories",
-      "type": {
-        "kind": "SCALAR",
-        "name": "Int"
-      },
-      "typeName": "Int",
-      "underlyingTypeName": "Int"
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Orange.calories",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
     },
-    {
-      "name": "Orange.variety",
-      "type": {
-        "kind": "ENUM",
-        "name": "OrangeVariety"
-      },
-      "typeName": "OrangeVariety",
-      "underlyingTypeName": "OrangeVariety"
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Orange.variety",
+    "type": {
+      "kind": "ENUM",
+      "name": "OrangeVariety"
     },
-    {
-      "arguments": [
-        {
-          "name": "name",
-          "type": {
-            "kind": "SCALAR",
-            "name": "String"
-          },
-          "typeName": "String",
-          "underlyingTypeName": "String"
-        }
-      ],
-      "name": "Query.edible",
-      "type": {
-        "kind": "INTERFACE",
-        "name": "Edible"
-      },
-      "typeName": "Edible",
-      "underlyingTypeName": "Edible"
+    "typeName": "OrangeVariety",
+    "underlyingTypeName": "OrangeVariety"
+  },
+  {
+    "arguments": [
+      {
+        "name": "name",
+        "type": {
+          "kind": "SCALAR",
+          "name": "String"
+        },
+        "typeName": "String",
+        "underlyingTypeName": "String"
+      }
+    ],
+    "name": "Query.edible",
+    "type": {
+      "kind": "INTERFACE",
+      "name": "Edible"
     },
-    {
-      "arguments": [
-        {
-          "name": "filter",
-          "type": {
-            "kind": "INPUT_OBJECT",
-            "name": "Filter"
-          },
-          "typeName": "Filter",
-          "underlyingTypeName": "Filter"
-        }
-      ],
-      "name": "Query.edibles",
-      "type": {
-        "kind": "NON_NULL",
+    "typeName": "Edible",
+    "underlyingTypeName": "Edible"
+  },
+  {
+    "arguments": [
+      {
+        "name": "filter",
+        "type": {
+          "kind": "INPUT_OBJECT",
+          "name": "Filter"
+        },
+        "typeName": "Filter",
+        "underlyingTypeName": "Filter"
+      }
+    ],
+    "name": "Query.edibles",
+    "type": {
+      "kind": "NON_NULL",
+      "ofType": {
+        "kind": "LIST",
         "ofType": {
-          "kind": "LIST",
+          "kind": "NON_NULL",
           "ofType": {
-            "kind": "NON_NULL",
-            "ofType": {
-              "kind": "INTERFACE",
-              "name": "Edible"
-            }
+            "kind": "INTERFACE",
+            "name": "Edible"
           }
         }
-      },
-      "typeName": "[Edible!]!",
-      "underlyingTypeName": "Edible"
+      }
     },
-    {
-      "arguments": [
-        {
-          "name": "name",
-          "type": {
-            "kind": "SCALAR",
-            "name": "String"
-          },
-          "typeName": "String",
-          "underlyingTypeName": "String"
-        }
-      ],
-      "name": "Query.fruit",
-      "type": {
-        "kind": "UNION",
-        "name": "Fruit"
-      },
-      "typeName": "Fruit",
-      "underlyingTypeName": "Fruit"
-    }
-  ]
+    "typeName": "[Edible!]!",
+    "underlyingTypeName": "Edible"
+  },
+  {
+    "arguments": [
+      {
+        "name": "name",
+        "type": {
+          "kind": "SCALAR",
+          "name": "String"
+        },
+        "typeName": "String",
+        "underlyingTypeName": "String"
+      }
+    ],
+    "name": "Query.fruit",
+    "type": {
+      "kind": "UNION",
+      "name": "Fruit"
+    },
+    "typeName": "Fruit",
+    "underlyingTypeName": "Fruit"
+  }
+]

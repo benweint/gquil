@@ -11,10 +11,11 @@ import (
 )
 
 type TestCaseParams struct {
-	Dir            string
-	Args           []string `yaml:"args"`
-	ExpectJson     bool     `yaml:"expectJson"`
-	ExpectedOutput string
+	Dir                string
+	Args               []string `yaml:"args"`
+	ExpectJson         bool     `yaml:"expectJson"`
+	ExpectedOutput     string
+	expectedOutputPath string
 }
 
 func TestCli(t *testing.T) {
@@ -46,6 +47,7 @@ func TestCli(t *testing.T) {
 		}
 
 		expectedOutputPath := path.Join(testCaseDir, expectedFilename)
+		params.expectedOutputPath = expectedOutputPath
 		expectedOutputRaw, err := os.ReadFile(expectedOutputPath)
 		assert.NoError(t, err)
 		params.ExpectedOutput = string(expectedOutputRaw)
@@ -69,6 +71,12 @@ func TestCli(t *testing.T) {
 				Stdin:  &stdinBuf,
 			})
 			assert.NoError(t, err)
+
+			updateExpected := os.Getenv("TEST_UPDATE_EXPECTED")
+			if updateExpected != "" {
+				err = os.WriteFile(tc.expectedOutputPath, stdoutBuf.Bytes(), 0655)
+				assert.NoError(t, err)
+			}
 
 			if tc.ExpectJson {
 				assert.JSONEq(t, tc.ExpectedOutput, stdoutBuf.String())
