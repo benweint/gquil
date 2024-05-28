@@ -1,0 +1,1 @@
+args: ["ls", "directives", "testdata/in.graphql"]

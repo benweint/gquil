@@ -1,0 +1,1 @@
+@key(fields: FieldSet!, resolvable: Boolean) on OBJECT | INTERFACE

@@ -1,0 +1,2 @@
+args: ["json", "testdata/in.graphql"]
+expectJson: true
