@@ -13,7 +13,7 @@ input Filter {
     limit: Int
 }
 
-type Apple implements Edible {
+type Apple implements Edible @key(fields: ["variety"]) {
     variety: AppleVariety
     measurements: Measurements
     calories: Int

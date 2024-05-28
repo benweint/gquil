@@ -3,6 +3,19 @@
     {
       "kind": "OBJECT",
       "name": "Apple",
+      "directives": [
+        {
+          "name": "key",
+          "arguments": [
+            {
+              "name": "fields",
+              "value": [
+                "variety"
+              ]
+            }
+          ]
+        }
+      ],
       "fields": [
         {
           "name": "variety",

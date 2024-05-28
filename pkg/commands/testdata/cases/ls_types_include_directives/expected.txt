@@ -1,0 +1,11 @@
+OBJECT Apple @key(fields: ["variety"])
+ENUM AppleVariety
+OBJECT Biscuit
+INTERFACE Edible
+SCALAR FieldSet
+INPUT_OBJECT Filter
+UNION Fruit
+OBJECT Measurements
+OBJECT Orange
+ENUM OrangeVariety
+OBJECT Query
