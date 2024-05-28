@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -31,7 +30,7 @@ Note that since GraphQL's introspection schema does not expose information about
 If your GraphQL endpoint requires authentication, you can set custom headers on the issued request using the --headers flag.`
 }
 
-func (c *GenerateSDLCmd) Run() error {
+func (c *GenerateSDLCmd) Run(ctx Context) error {
 	sv, err := introspection.ParseSpecVersion(c.SpecVersion)
 	if err != nil {
 		return err
@@ -58,11 +57,7 @@ func (c *GenerateSDLCmd) Run() error {
 			m.FilterBuiltins()
 		}
 
-		serialized, err := json.Marshal(m)
-		if err != nil {
-			return fmt.Errorf("failed to serialize schema to JSON: %w", err)
-		}
-		fmt.Print(string(serialized) + "\n")
+		return ctx.PrintJson(m)
 	} else {
 		if !c.IncludeBuiltins {
 			astutil.FilterBuiltins(s)

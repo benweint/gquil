@@ -1,9 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"github.com/benweint/gquil/pkg/introspection"
 )
 
@@ -21,7 +18,7 @@ type EmitQueryCmd struct {
 	SpecVersionOptions
 }
 
-func (c *EmitQueryCmd) Run() error {
+func (c *EmitQueryCmd) Run(ctx Context) error {
 	sv, err := introspection.ParseSpecVersion(c.SpecVersion)
 	if err != nil {
 		return err
@@ -32,13 +29,9 @@ func (c *EmitQueryCmd) Run() error {
 			Query:         introspection.GetQuery(sv),
 			OperationName: "IntrospectionQuery",
 		}
-		jq, err := json.Marshal(q)
-		if err != nil {
-			return err
-		}
-		fmt.Print(string(jq) + "\n")
-	} else {
-		fmt.Printf("%s\n", introspection.GetQuery(sv))
+		return ctx.PrintJson(q)
 	}
+
+	ctx.Printf("%s\n", introspection.GetQuery(sv))
 	return nil
 }

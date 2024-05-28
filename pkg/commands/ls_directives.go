@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -14,7 +13,7 @@ type LsDirectivesCmd struct {
 	OutputOptions
 }
 
-func (c LsDirectivesCmd) Run() error {
+func (c LsDirectivesCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
@@ -25,15 +24,11 @@ func (c LsDirectivesCmd) Run() error {
 	}
 
 	if c.Json {
-		j, err := json.Marshal(s.Directives)
-		if err != nil {
-			return err
-		}
-		fmt.Printf(string(j) + "\n")
-	} else {
-		for _, directive := range s.Directives {
-			fmt.Printf("%s\n", formatDirectiveDefinition(directive))
-		}
+		return ctx.PrintJson(s.Directives)
+	}
+
+	for _, directive := range s.Directives {
+		ctx.Printf("%s\n", formatDirectiveDefinition(directive))
 	}
 
 	return nil

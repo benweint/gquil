@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
-	"fmt"
 	"slices"
 	"strings"
 
@@ -21,7 +19,7 @@ type LsTypesCmd struct {
 	GraphFilteringOptions
 }
 
-func (c LsTypesCmd) Run() error {
+func (c LsTypesCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
@@ -67,11 +65,7 @@ func (c LsTypesCmd) Run() error {
 	})
 
 	if c.Json {
-		j, err := json.Marshal(types)
-		if err != nil {
-			return err
-		}
-		fmt.Print(string(j) + "\n")
+		return ctx.PrintJson(types)
 	} else {
 		for _, t := range types {
 			directives := ""
@@ -83,9 +77,9 @@ func (c LsTypesCmd) Run() error {
 			}
 
 			if c.Kind != "" {
-				fmt.Printf("%s%s\n", t.Name, directives)
+				ctx.Printf("%s%s\n", t.Name, directives)
 			} else {
-				fmt.Printf("%s %s%s\n", t.Kind, t.Name, directives)
+				ctx.Printf("%s %s%s\n", t.Kind, t.Name, directives)
 			}
 		}
 	}

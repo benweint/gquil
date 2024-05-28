@@ -22,7 +22,7 @@ type Schema struct {
 }
 
 func (s *Schema) FilterBuiltins() {
-	s.Types = filterBuiltinTypes(s.Types)
+	s.Types = filterBuiltinTypesAndFields(s.Types)
 	s.Directives = filterBuiltinDirectives(s.Directives)
 }
 

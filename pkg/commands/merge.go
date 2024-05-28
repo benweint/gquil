@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"os"
-
 	"github.com/benweint/gquil/pkg/astutil"
 	"github.com/vektah/gqlparser/v2/formatter"
 )
@@ -12,7 +10,7 @@ type MergeCmd struct {
 	FilteringOptions
 }
 
-func (c *MergeCmd) Run() error {
+func (c *MergeCmd) Run(ctx Context) error {
 	s, err := parseSchemaFromPaths(c.SchemaFiles)
 	if err != nil {
 		return err
@@ -22,7 +20,7 @@ func (c *MergeCmd) Run() error {
 		astutil.FilterBuiltins(s)
 	}
 
-	f := formatter.NewFormatter(os.Stdout)
+	f := formatter.NewFormatter(ctx.Stdout)
 	f.FormatSchema(s)
 	return nil
 }

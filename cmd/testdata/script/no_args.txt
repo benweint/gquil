@@ -1,2 +1,0 @@
-! exec gquil
-stdout 'Usage: gquil <command> '

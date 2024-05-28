@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"encoding/json"
-	"fmt"
 	"slices"
 	"strings"
 
@@ -20,7 +18,7 @@ type LsFieldsCmd struct {
 	GraphFilteringOptions
 }
 
-func (c LsFieldsCmd) Run() error {
+func (c LsFieldsCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
@@ -53,26 +51,22 @@ func (c LsFieldsCmd) Run() error {
 	})
 
 	if c.Json {
-		j, err := json.Marshal(fields)
-		if err != nil {
-			return err
+		return ctx.PrintJson(fields)
+	}
+
+	for _, f := range fields {
+		args := ""
+		if c.IncludeArgs {
+			args = formatArgumentDefinitionList(f.Arguments)
 		}
-		fmt.Print(string(j) + "\n")
-	} else {
-		for _, f := range fields {
-			args := ""
-			if c.IncludeArgs {
-				args = formatArgumentDefinitionList(f.Arguments)
+		directives := ""
+		if c.IncludeDirectives {
+			directives, err = formatDirectiveList(f.Directives)
+			if err != nil {
+				return err
 			}
-			directives := ""
-			if c.IncludeDirectives {
-				directives, err = formatDirectiveList(f.Directives)
-				if err != nil {
-					return err
-				}
-			}
-			fmt.Printf("%s%s: %s%s\n", f.Name, args, f.Type, directives)
 		}
+		ctx.Printf("%s%s: %s%s\n", f.Name, args, f.Type, directives)
 	}
 
 	return nil

@@ -49,7 +49,7 @@ func (tc *testCase) run(t *testing.T) {
 	ss, err := MakeSchema(s)
 	assert.NoError(t, err)
 
-	ss.Types = filterBuiltinTypes(ss.Types)
+	ss.Types = filterBuiltinTypesAndFields(ss.Types)
 	ss.Directives = filterBuiltinDirectives(ss.Directives)
 
 	jsonTypes, err := json.Marshal(ss)

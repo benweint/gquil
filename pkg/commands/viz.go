@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/benweint/gquil/pkg/graph"
 )
 
@@ -13,7 +11,7 @@ type VizCmd struct {
 	InterfacesAsUnions bool `name:"interfaces-as-unions" help:"Treat interfaces as unions rather than objects for the purposes of graph construction."`
 }
 
-func (c *VizCmd) Run() error {
+func (c *VizCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
@@ -38,7 +36,7 @@ func (c *VizCmd) Run() error {
 		g = g.ReachableFrom(roots, c.Depth)
 	}
 
-	fmt.Print(g.ToDot())
+	ctx.Print(g.ToDot())
 
 	return nil
 }

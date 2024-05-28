@@ -1,10 +1,5 @@
 package commands
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 type JsonCmd struct {
 	InputOptions
 	FilteringOptions
@@ -22,7 +17,7 @@ The JSON format for fields and arguments also adds several convenience fields wh
   * typeName: the type of the field, represented as a string in GraphQL SDL notation (for example: '[String!]!')`
 }
 
-func (c *JsonCmd) Run() error {
+func (c *JsonCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
 		return err
@@ -36,12 +31,5 @@ func (c *JsonCmd) Run() error {
 		s.FilterBuiltins()
 	}
 
-	out, err := json.Marshal(s)
-	if err != nil {
-		return fmt.Errorf("failed to serialize schema to JSON: %w", err)
-	}
-
-	fmt.Print(string(out))
-
-	return nil
+	return ctx.PrintJson(s)
 }
