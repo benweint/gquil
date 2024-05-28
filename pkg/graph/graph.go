@@ -2,6 +2,7 @@ package graph
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/benweint/gquil/pkg/astutil"
@@ -212,24 +213,33 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 }
 
 func (g *Graph) ToDot() string {
-	var nodeDefs []string
-	for _, node := range g.nodes {
-		if astutil.IsBuiltinType(node.Name) && !g.renderBuiltins {
+	nodeDefs := g.buildNodeDefs()
+	edgeDefs := g.buildEdgeDefs()
+
+	return "digraph {\n  rankdir=LR\n  ranksep=2\n  node [shape=box fontname=Courier]\n" + strings.Join(nodeDefs, "\n") + "\n" + strings.Join(edgeDefs, "\n") + "\n}\n"
+}
+
+func (g *Graph) buildNodeDefs() []string {
+	var result []string
+	for _, name := range sortedKeys(g.nodes) {
+		if astutil.IsBuiltinType(name) && !g.renderBuiltins {
+			continue
+		}
+		node := g.nodes[name]
+		if node.Kind == ast.Scalar {
 			continue
 		}
 		nodeDef := fmt.Sprintf("  %s [shape=plain, label=<%s>]", node.ID(), g.makeNodeLabel(node))
-		nodeDefs = append(nodeDefs, nodeDef)
+		result = append(result, nodeDef)
 	}
-
-	edgeDefs := g.buildEdgeDefs()
-
-	return "digraph {\nrankdir=LR\nranksep=2\nnode [shape=box fontname=Courier]\n" + strings.Join(nodeDefs, "\n") + "\n" + strings.Join(edgeDefs, "\n") + "\n}\n"
+	return result
 }
 
 func (g *Graph) buildEdgeDefs() []string {
-	var result []string
 
-	for _, edges := range g.edges {
+	var result []string
+	for _, sourceNodeName := range sortedKeys(g.edges) {
+		edges := g.edges[sourceNodeName]
 		for _, edge := range edges {
 			srcPortSuffix := ""
 			dstPortSuffix := ":main"
@@ -258,6 +268,15 @@ func (g *Graph) buildEdgeDefs() []string {
 		}
 	}
 
+	return result
+}
+
+func sortedKeys[T any](m map[string]T) []string {
+	var result []string
+	for k := range m {
+		result = append(result, k)
+	}
+	sort.Strings(result)
 	return result
 }
 
