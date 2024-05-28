@@ -1,0 +1,65 @@
+digraph {
+  rankdir=LR
+  ranksep=2
+  node [shape=box fontname=Courier]
+  n_Apple [shape=plain, label=<<TABLE>
+    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="#fbb4ae">object Apple</TD></TR>
+    <TR><TD ROWSPAN="1">variety</TD><TD COLSPAN="2" PORT="p_variety">AppleVariety</TD></TR>
+    <TR><TD ROWSPAN="1">measurements</TD><TD COLSPAN="2" PORT="p_measurements">Measurements</TD></TR>
+    <TR><TD ROWSPAN="1">calories</TD><TD COLSPAN="2" PORT="p_calories">Int</TD></TR>
+
+  </TABLE>>]
+  n_AppleVariety [shape=plain, label=<<TABLE>
+  <TR><TD PORT="main" BGCOLOR="#decbe4">enum AppleVariety</TD></TR>  <TR><TD>FUJI</TD></TR>\n  <TR><TD>COSMIC_CRISP</TD></TR>\n  <TR><TD>GRANNY_SMITH</TD></TR>\n</TABLE>>]
+  n_Biscuit [shape=plain, label=<<TABLE>
+    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="#fbb4ae">object Biscuit</TD></TR>
+    <TR><TD ROWSPAN="1">calories</TD><TD COLSPAN="2" PORT="p_calories">Int</TD></TR>
+
+  </TABLE>>]
+  n_Edible [shape=plain, label=<<TABLE>
+  <TR><TD PORT="main" BGCOLOR="#b3cde3">interface Edible</TD></TR>  <TR><TD PORT="p_Apple">Apple</TD></TR>\n  <TR><TD PORT="p_Orange">Orange</TD></TR>\n  <TR><TD PORT="p_Biscuit">Biscuit</TD></TR>\n</TABLE>>]
+  n_Filter [shape=plain, label=<<TABLE>
+  <TR><TD COLSPAN="2" PORT="main" BGCOLOR="#ccebc5">input Filter</TD></TR>
+  <TR><TD>nameLike</TD><TD PORT="p_nameLike">String</TD></TR>
+  <TR><TD>limit</TD><TD PORT="p_limit">Int</TD></TR>
+</TABLE>>]
+  n_Fruit [shape=plain, label=<<TABLE>
+  <TR><TD PORT="main" BGCOLOR="#fed9a6">union Fruit</TD></TR>  <TR><TD PORT="p_Apple">Apple</TD></TR>\n  <TR><TD PORT="p_Orange">Orange</TD></TR>\n</TABLE>>]
+  n_Measurements [shape=plain, label=<<TABLE>
+    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="#fbb4ae">object Measurements</TD></TR>
+    <TR><TD ROWSPAN="1">height</TD><TD COLSPAN="2" PORT="p_height">Int</TD></TR>
+    <TR><TD ROWSPAN="1">width</TD><TD COLSPAN="2" PORT="p_width">Int</TD></TR>
+    <TR><TD ROWSPAN="1">depth</TD><TD COLSPAN="2" PORT="p_depth">Int</TD></TR>
+
+  </TABLE>>]
+  n_Orange [shape=plain, label=<<TABLE>
+    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="#fbb4ae">object Orange</TD></TR>
+    <TR><TD ROWSPAN="1">variety</TD><TD COLSPAN="2" PORT="p_variety">OrangeVariety</TD></TR>
+    <TR><TD ROWSPAN="1">calories</TD><TD COLSPAN="2" PORT="p_calories">Int</TD></TR>
+
+  </TABLE>>]
+  n_OrangeVariety [shape=plain, label=<<TABLE>
+  <TR><TD PORT="main" BGCOLOR="#decbe4">enum OrangeVariety</TD></TR>  <TR><TD>VALENCIA</TD></TR>\n  <TR><TD>NAVEL</TD></TR>\n  <TR><TD>CARA_CARA</TD></TR>\n</TABLE>>]
+  n_Query [shape=plain, label=<<TABLE>
+    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="#fbb4ae">object Query</TD></TR>
+    <TR><TD ROWSPAN="2">fruit</TD><TD COLSPAN="2" PORT="p_fruit">Fruit</TD></TR>
+    <TR><TD>name</TD><TD PORT="p_fruit_name">String</TD></TR>
+    <TR><TD ROWSPAN="2">edible</TD><TD COLSPAN="2" PORT="p_edible">Edible</TD></TR>
+    <TR><TD>name</TD><TD PORT="p_edible_name">String</TD></TR>
+    <TR><TD ROWSPAN="2">edibles</TD><TD COLSPAN="2" PORT="p_edibles">[Edible!]!</TD></TR>
+    <TR><TD>filter</TD><TD PORT="p_edibles_filter">Filter</TD></TR>
+
+  </TABLE>>]
+  n_Apple:p_variety -> n_AppleVariety:main
+  n_Apple:p_measurements -> n_Measurements:main
+  n_Edible:p_Apple -> n_Apple:main
+  n_Edible:p_Orange -> n_Orange:main
+  n_Edible:p_Biscuit -> n_Biscuit:main
+  n_Fruit:p_Apple -> n_Apple:main
+  n_Fruit:p_Orange -> n_Orange:main
+  n_Orange:p_variety -> n_OrangeVariety:main
+  n_Query:p_fruit -> n_Fruit:main
+  n_Query:p_edible -> n_Edible:main
+  n_Query:p_edibles -> n_Edible:main
+  n_Query:p_edibles_filter -> n_Filter:main
+}

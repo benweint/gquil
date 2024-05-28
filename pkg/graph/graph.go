@@ -215,7 +215,6 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 func (g *Graph) ToDot() string {
 	nodeDefs := g.buildNodeDefs()
 	edgeDefs := g.buildEdgeDefs()
-
 	return "digraph {\n  rankdir=LR\n  ranksep=2\n  node [shape=box fontname=Courier]\n" + strings.Join(nodeDefs, "\n") + "\n" + strings.Join(edgeDefs, "\n") + "\n}\n"
 }
 
