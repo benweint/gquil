@@ -27,13 +27,36 @@ func MakeParser(opts ...kong.Option) (*kong.Kong, error) {
 	return kong.New(&cli, append(defaultOptions, opts...)...)
 }
 
+// massageArgs munges the input args in order to translate:
+// - `gquil`            -> `gquil --help`
+// - `gquil help`       -> `quil --help`
+// - `gquil help <cmd>` -> `gquil <cmd> --help`
+func massageArgs(args []string) []string {
+	args = args[1:]
+
+	if len(args) == 0 {
+		return []string{args[0], "--help"}
+	}
+
+	if args[0] == "help" {
+		if len(args) == 1 {
+			return []string{"--help"}
+		}
+
+		return append(args[1:], "--help")
+	}
+
+	return args
+}
+
 func Main() int {
 	parser, err := MakeParser()
 	if err != nil {
 		panic(err)
 	}
 
-	ctx, err := parser.Parse(os.Args[1:])
+	args := massageArgs(os.Args)
+	ctx, err := parser.Parse(args)
 	parser.FatalIfErrorf(err)
 	err = ctx.Run(Context{
 		Stdout: os.Stdout,

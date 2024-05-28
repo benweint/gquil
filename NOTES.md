@@ -1,17 +1,18 @@
 ## Testing
 
-- [ ] high level test coverage
+- [x] high level test coverage
+- [ ] test coverage for introspection commands (requires a running server)
 
 ## Documentation
 
-- [ ] Make `gquil help <subcommand>` show help instead of an error
+- [x] Make `gquil help <subcommand>` show help instead of an error
 - [ ] Make help text link back to a path for feedback, issues
 - [ ] Add examples to the in-tool documentation
 - [ ] Add a manpage
 
 ## Output / formatting tweaks
 
-- [ ] Make `--json` flag format emitted JSON
+- [x] Make `--json` flag format emitted JSON
 - [ ] Add a `--version` flag
 
 ## Argument handling
@@ -25,3 +26,4 @@
 ## Features
 
 - [ ] Add a --named arg to ls fields command
+- [ ] Make --interfaces-as-unions work everywhere that --from does
