@@ -18,34 +18,11 @@ jobs:
       with:
         go-version: '1.22'
 
-    - name: Build (darwin amd64)
-      run: go build -v -o gquil_darwin_amd64 ./cmd/gquil.go
-      env:
-        GOOS: darwin
-        GOARCH: amd64
-
-    - name: Build (darwin arm64)
-      run: go build -v -o gquil_darwin_arm64 ./cmd/gquil.go
-      env:
-        GOOS: darwin
-        GOARCH: arm64
-
-    - name: Build (linux amd64)
-      run: go build -v -o gquil_linux_amd64 ./cmd/gquil.go
-      env:
-        GOOS: linux
-        GOARCH: amd64
-
-    - name: Build (linux arm64)
-      run: go build -v -o gquil_linux_arm64 ./cmd/gquil.go
-      env:
-        GOOS: linux
-        GOARCH: arm64
-
-    - run: |
-        sha256sum gquil_* >checksums.txt
-
-    - name: Create release
-      uses: ncipollo/release-action@v1
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v5
       with:
-        artifacts: "gquil_*,checksums.txt"
+        distribution: goreleaser
+        version: "~> v1"
+        args: release --clean
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

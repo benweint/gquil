@@ -6,12 +6,24 @@ import (
 	"github.com/alecthomas/kong"
 )
 
+// version string will be injected by automation
+var version string = "unknown"
+
 type CLI struct {
 	Ls            LsCmd            `cmd:"" aliases:"list" help:"List types, fields, or directives in a GraphQL SDL document."`
 	Json          JsonCmd          `cmd:"" help:"Return a JSON representation of a GraphQL SDL document."`
 	Introspection IntrospectionCmd `cmd:"" help:"Interact with a GraphQL introspection endpoint over HTTP."`
 	Viz           VizCmd           `cmd:"" help:"Visualize a GraphQL schema using GraphViz."`
 	Merge         MergeCmd         `cmd:"" help:"Merge multiple GraphQL SDL documents into a single one."`
+	Version       versionFlag      `help:"Print version and exit."`
+}
+
+type versionFlag bool
+
+func (f versionFlag) BeforeReset(ctx *kong.Context) error {
+	_, _ = ctx.Stdout.Write([]byte(version + "\n"))
+	ctx.Kong.Exit(0)
+	return nil
 }
 
 func MakeParser(opts ...kong.Option) (*kong.Kong, error) {
