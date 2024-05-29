@@ -12,7 +12,7 @@ type CLI struct {
 	Introspection IntrospectionCmd `cmd:"" help:"Interact with a GraphQL introspection endpoint over HTTP."`
 	Viz           VizCmd           `cmd:"" help:"Visualize a GraphQL schema using GraphViz."`
 	Merge         MergeCmd         `cmd:"" help:"Merge multiple GraphQL SDL documents into a single one."`
-	VersionFlag   versionFlag      `name:"version" help:"Print version and exit."`
+	VersionFlag   versionFlag      `hidden:"" help:"Print version and exit."`
 	Version       VersionCmd       `cmd:"" help:"Print the version of gquil and exit."`
 }
 
