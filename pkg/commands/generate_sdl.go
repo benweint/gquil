@@ -24,10 +24,17 @@ type GenerateSDLCmd struct {
 }
 
 func (c *GenerateSDLCmd) Help() string {
-	return `Issues a GraphQL introspection query using an HTTP POST request to the specified GraphQL endpoint, and uses the response to generate a GraphQL SDL document, which is emitted to stdout.
-Note that since GraphQL's introspection schema does not expose information about the application sites of most directives, the generated SDL will lack any applied directives (with the exception of @deprecated, which is exposed via the introspection system).
+	return `Issues a GraphQL introspection query via an HTTP POST request to the specified endpoint, and uses the response to generate a GraphQL SDL document, which is emitted to stdout.
 
-If your GraphQL endpoint requires authentication, you can set custom headers on the issued request using the --headers flag.`
+Example:
+
+  gquil introspection generate-sdl \
+    --header 'origin: https://docs.developer.yelp.com' \
+    https://api.yelp.com/v3/graphql
+
+Note that since GraphQL's introspection schema does not expose information about the application sites of most directives, the generated SDL will lack any applied directives (with the exception of @deprecated, which is exposed via the introspection system)
+
+If your GraphQL endpoint requires authentication or other special headers, you can set custom headers on the issued request using the --header flag.`
 }
 
 func (c *GenerateSDLCmd) Run(ctx Context) error {
