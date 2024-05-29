@@ -32,3 +32,20 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+brews:
+- repository:
+    owner: benweint
+    name: gquil
+  url_template: "https://github.com/benweint/gquil/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  download_strategy: CurlDownloadStrategy
+  commit_author:
+    name: GoReleaser Bot
+    email: goreleaser@carlosbecker.com
+  directory: HomebrewFormula
+  homepage: "https://github.com/benweint/gquil"
+  description: "Inspect, visualize, and transform GraphQL schemas on the command line."
+  license: "MIT"
+  skip_upload: false
+  test: |
+    system "#{bin}/gquil --version"
