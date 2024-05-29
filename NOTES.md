@@ -13,7 +13,7 @@
 ## Output / formatting tweaks
 
 - [x] Make `--json` flag format emitted JSON
-- [ ] Add a `--version` flag
+- [x] Add a `--version` flag
 
 ## Argument handling
 
@@ -27,3 +27,4 @@
 
 - [ ] Add a --named arg to ls fields command
 - [ ] Make --interfaces-as-unions work everywhere that --from does
+- [ ] Add a --depth-reverse flag to graph filtering options
