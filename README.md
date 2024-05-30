@@ -137,3 +137,47 @@ Sometimes, GraphQL schemas are split across multiple files. For this reason, mos
 During the merging process, this command will ensure that there are no duplicate definitions, and that the merged result is actually a valid GraphQL SDL document, producing an error if it is not.
 
 The resulting GraphQL will have types and directives sorted by their names, making the output deterministic.
+
+## More examples
+
+These examples show some ways that you can compose `gquil` with other tools.
+
+### Check type / name consistency for a given field name
+
+Are all fields named `user` in the GitHub GraphQL schema typed as `User`? Nope!
+
+```
+❯ gquil ls fields --named user --json ./examples/github.graphql | jq '[.[]|.underlyingTypeName]|unique'
+[
+  "Actor",
+  "User"
+]
+```
+
+### Diff two GraphQL schemas with `dyff`
+
+By using `gquil json` to produce a JSON representation of both the old and new schemas, you can generate a nice-looking diff report between them with [`dyff`](https://github.com/homeport/dyff):
+
+```
+❯ dyff between --omit-header \
+  <(gquil json before.graphql) \
+  <(gquil json after.graphql)
+
+types
+  + one list entry added:
+    - name: Banana
+    │ kind: OBJECT
+    │ interfaces:
+    │ - Edible
+    │ fields:
+    │ - name: calories
+    │ │ type:
+    │ │ │ name: Int
+    │ │ │ kind: SCALAR
+    │ │ typeName: Int
+    │ │ underlyingTypeName: Int
+
+types.Edible.possibleTypeNames
+  + one list entry added:
+    - Banana
+```
