@@ -1,0 +1,12 @@
+OBJECT Apple
+ENUM AppleVariety
+OBJECT Banana
+OBJECT Biscuit
+INTERFACE Edible
+SCALAR FieldSet
+INPUT_OBJECT Filter
+UNION Fruit
+OBJECT Measurements
+OBJECT Orange
+ENUM OrangeVariety
+OBJECT Query
