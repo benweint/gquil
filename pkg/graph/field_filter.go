@@ -65,10 +65,6 @@ type fieldFilter struct {
 	includeFields map[string]bool
 }
 
-type fieldLike interface {
-	FieldName() string
-}
-
 func (f *fieldFilter) merge(other *fieldFilter) {
 	if other.includeAll {
 		f.includeAll = true
@@ -80,14 +76,14 @@ func (f *fieldFilter) merge(other *fieldFilter) {
 	}
 }
 
-func applyFilter[T fieldLike](f *fieldFilter, list []T) []T {
+func applyFilter(f *fieldFilter, list model.FieldDefinitionList) model.FieldDefinitionList {
 	if f.includeAll {
 		return list
 	}
 
-	var result []T
+	var result model.FieldDefinitionList
 	for _, field := range list {
-		if f.includeFields[field.FieldName()] {
+		if f.includeFields[field.Name] {
 			result = append(result, field)
 		}
 	}

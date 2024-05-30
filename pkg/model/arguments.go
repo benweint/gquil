@@ -7,7 +7,7 @@ import (
 )
 
 // Based on the __InputValue introspection type.
-type InputValueDefinition struct {
+type ArgumentDefinition struct {
 	Name         string
 	Description  string
 	DefaultValue Value
@@ -15,7 +15,7 @@ type InputValueDefinition struct {
 	Directives   DirectiveList
 }
 
-type InputValueDefinitionList []*InputValueDefinition
+type ArgumentDefinitionList []*ArgumentDefinition
 
 type ArgumentList []*Argument
 
@@ -24,11 +24,7 @@ type Argument struct {
 	Value Value  `json:"value"`
 }
 
-func (a *InputValueDefinition) FieldName() string {
-	return a.Name
-}
-
-func (a *InputValueDefinition) MarshalJSON() ([]byte, error) {
+func (a *ArgumentDefinition) MarshalJSON() ([]byte, error) {
 	m := map[string]any{
 		"name":               a.Name,
 		"type":               a.Type,
@@ -51,10 +47,10 @@ func (a *InputValueDefinition) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-func makeInputValueDefinitionListFromArgs(in ast.ArgumentDefinitionList) (InputValueDefinitionList, error) {
-	var result InputValueDefinitionList
+func makeArgumentDefinitionList(in ast.ArgumentDefinitionList) (ArgumentDefinitionList, error) {
+	var result ArgumentDefinitionList
 	for _, a := range in {
-		argDef, err := makeInputValueDefinition(a.Name, a.Description, a.Type, a.Directives, a.DefaultValue)
+		argDef, err := makeArgumentDefinition(a.Name, a.Description, a.Type, a.Directives, a.DefaultValue)
 		if err != nil {
 			return nil, err
 		}
@@ -63,7 +59,7 @@ func makeInputValueDefinitionListFromArgs(in ast.ArgumentDefinitionList) (InputV
 	return result, nil
 }
 
-func makeInputValueDefinition(name, description string, inType *ast.Type, inDirectives ast.DirectiveList, inDefaultValue *ast.Value) (*InputValueDefinition, error) {
+func makeArgumentDefinition(name, description string, inType *ast.Type, inDirectives ast.DirectiveList, inDefaultValue *ast.Value) (*ArgumentDefinition, error) {
 	defaultValue, err := makeValue(inDefaultValue)
 	if err != nil {
 		return nil, err
@@ -72,7 +68,7 @@ func makeInputValueDefinition(name, description string, inType *ast.Type, inDire
 	if err != nil {
 		return nil, err
 	}
-	return &InputValueDefinition{
+	return &ArgumentDefinition{
 		Name:         name,
 		Description:  description,
 		Type:         makeType(inType),

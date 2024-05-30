@@ -133,7 +133,7 @@ func (g *Graph) makeUnionEdges(t *model.Definition) []*edge {
 	return result
 }
 
-func (g *Graph) makeFieldEdge(src *model.Definition, targetType *model.Type, f *model.FieldDefinition, arg *model.InputValueDefinition) *edge {
+func (g *Graph) makeFieldEdge(src *model.Definition, targetType *model.Type, f *model.FieldDefinition, arg *model.ArgumentDefinition) *edge {
 	kind := edgeKindField
 
 	if arg != nil {
@@ -265,10 +265,8 @@ func (g *Graph) buildEdgeDefs() []string {
 			}
 
 			switch edge.kind {
-			case edgeKindField:
+			case edgeKindField, edgeKindInputField:
 				srcPortSuffix = ":" + portName(edge.field.Name)
-			case edgeKindInputField:
-				srcPortSuffix = ":" + portName(edge.inputField.Name)
 			case edgeKindArgument:
 				srcPortSuffix = ":" + portNameForArgument(edge.field.Name, edge.argument.Name)
 			case edgeKindPossibleType:

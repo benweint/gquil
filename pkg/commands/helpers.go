@@ -64,7 +64,7 @@ func parseSchemaFromPaths(paths []string) (*ast.Schema, error) {
 	return schema, nil
 }
 
-func formatArgumentDefinitionList(al model.InputValueDefinitionList) string {
+func formatArgumentDefinitionList(al model.ArgumentDefinitionList) string {
 	if len(al) == 0 {
 		return ""
 	}

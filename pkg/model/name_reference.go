@@ -9,10 +9,9 @@ const (
 )
 
 type NameReference struct {
-	Kind       NameReferenceKind
-	typeRef    *Definition
-	field      *FieldDefinition
-	inputField *InputValueDefinition
+	Kind    NameReferenceKind
+	typeRef *Definition
+	field   *FieldDefinition
 }
 
 func (n *NameReference) GetTargetType() *Definition {
@@ -20,11 +19,8 @@ func (n *NameReference) GetTargetType() *Definition {
 }
 
 func (n *NameReference) GetFieldName() string {
-	switch n.Kind {
-	case FieldNameReference:
+	if n.field != nil {
 		return n.field.Name
-	case InputFieldNameReference:
-		return n.inputField.Name
 	}
 	return ""
 }

@@ -16,7 +16,6 @@ type edge struct {
 	dst          *node
 	kind         edgeKind
 	field        *model.FieldDefinition
-	inputField   *model.InputValueDefinition
-	argument     *model.InputValueDefinition
+	argument     *model.ArgumentDefinition
 	possibleType string
 }

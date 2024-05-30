@@ -17,18 +17,18 @@ type DirectiveList []*Directive
 // DirectiveDefinition represents the definition of a directive.
 // Based on the __Directive introspection type defined here: https://spec.graphql.org/October2021/#sec-The-__Directive-Type
 type DirectiveDefinition struct {
-	Description  string                   `json:"description"`
-	Name         string                   `json:"name"`
-	Arguments    InputValueDefinitionList `json:"arguments,omitempty"`
-	Locations    []ast.DirectiveLocation  `json:"locations"`
-	IsRepeatable bool                     `json:"repeatable"`
+	Description  string                  `json:"description"`
+	Name         string                  `json:"name"`
+	Arguments    ArgumentDefinitionList  `json:"arguments,omitempty"`
+	Locations    []ast.DirectiveLocation `json:"locations"`
+	IsRepeatable bool                    `json:"repeatable"`
 }
 
 // DirectiveDefinitionList represents a list of directive definitions.
 type DirectiveDefinitionList []*DirectiveDefinition
 
 func makeDirectiveDefinition(in *ast.DirectiveDefinition) (*DirectiveDefinition, error) {
-	args, err := makeInputValueDefinitionListFromArgs(in.Arguments)
+	args, err := makeArgumentDefinitionList(in.Arguments)
 	if err != nil {
 		return nil, err
 	}
