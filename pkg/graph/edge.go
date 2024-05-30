@@ -11,8 +11,8 @@ const (
 )
 
 type edge struct {
-	src          *node
-	dst          *node
+	src          *model.Definition
+	dst          *model.Definition
 	kind         edgeKind
 	field        *model.FieldDefinition
 	argument     *model.ArgumentDefinition

@@ -11,7 +11,7 @@ import (
 )
 
 type Graph struct {
-	nodes              map[string]*node
+	nodes              model.DefinitionMap
 	edges              map[string][]*edge
 	interfacesAsUnions bool
 	renderBuiltins     bool
@@ -43,16 +43,12 @@ func WithBuiltins(renderBuiltins bool) GraphOption {
 
 func MakeGraph(s *model.Schema, opts ...GraphOption) *Graph {
 	g := &Graph{
-		nodes: map[string]*node{},
+		nodes: s.Types,
 		edges: map[string][]*edge{},
 	}
 
 	for _, opt := range opts {
 		opt(g)
-	}
-
-	for _, t := range s.Types {
-		g.nodes[t.Name] = &node{Definition: t}
 	}
 
 	for _, t := range s.Types {
@@ -134,54 +130,48 @@ func (g *Graph) makeFieldEdge(src *model.Definition, targetType *model.Type, f *
 }
 
 func (g *Graph) GetDefinitions() model.DefinitionMap {
-	result := model.DefinitionMap{}
-	for _, node := range g.nodes {
-		result[node.Name] = node.Definition
-	}
-	return result
+	return g.nodes
 }
 
 func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph {
 	var defs model.DefinitionList
-	defMap := map[string]*model.Definition{}
 
 	for _, node := range g.nodes {
-		defs = append(defs, node.Definition)
-		defMap[node.Name] = node.Definition
+		defs = append(defs, node)
 	}
 	rootDefs := applyFieldFilters(defs, roots)
 
 	seen := model.DefinitionMap{}
 
-	var traverse func(def *model.Definition, depth int)
-	traverse = func(def *model.Definition, depth int) {
+	var traverse func(n *model.Definition, depth int)
+	traverse = func(n *model.Definition, depth int) {
 		if maxDepth > 0 && depth > maxDepth {
 			return
 		}
-		if _, ok := seen[def.Name]; ok {
+		if _, ok := seen[n.Name]; ok {
 			return
 		}
-		if def.Kind == ast.Scalar {
+		if n.Kind == ast.Scalar {
 			return
 		}
 
-		seen[def.Name] = def
-		kind := normalizeKind(def.Kind, g.interfacesAsUnions)
+		seen[n.Name] = n
+		kind := normalizeKind(n.Kind, g.interfacesAsUnions)
 
 		switch kind {
 		case ast.Object, ast.InputObject:
-			for _, field := range def.Fields {
+			for _, field := range n.Fields {
 				for _, arg := range field.Arguments {
 					argType := arg.Type.Unwrap()
-					traverse(defMap[argType.Name], depth+1)
+					traverse(g.nodes[argType.Name], depth+1)
 				}
 
 				underlyingType := field.Type.Unwrap()
-				traverse(defMap[underlyingType.Name], depth+1)
+				traverse(g.nodes[underlyingType.Name], depth+1)
 			}
 		case ast.Union:
-			for _, pt := range def.PossibleTypes {
-				traverse(defMap[pt], depth+1)
+			for _, pt := range n.PossibleTypes {
+				traverse(g.nodes[pt], depth+1)
 			}
 		}
 	}
@@ -190,7 +180,7 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 		traverse(root, 1)
 	}
 
-	filteredNodes := map[string]*node{}
+	filteredNodes := model.DefinitionMap{}
 	for name, node := range g.nodes {
 		if _, ok := seen[name]; ok {
 			filteredNodes[name] = node
@@ -232,7 +222,7 @@ func (g *Graph) buildNodeDefs() []string {
 		if node.Kind == ast.Scalar {
 			continue
 		}
-		nodeDef := fmt.Sprintf("  %s [shape=plain, label=<%s>]", node.ID(), g.makeNodeLabel(node))
+		nodeDef := fmt.Sprintf("  %s [shape=plain, label=<%s>]", nodeID(node), g.makeNodeLabel(node))
 		result = append(result, nodeDef)
 	}
 	return result
@@ -265,7 +255,7 @@ func (g *Graph) buildEdgeDefs() []string {
 				srcPortSuffix = ":" + portName(edge.possibleType)
 			}
 
-			result = append(result, fmt.Sprintf("  %s%s -> %s%s", edge.src.ID(), srcPortSuffix, edge.dst.ID(), dstPortSuffix))
+			result = append(result, fmt.Sprintf("  %s%s -> %s%s", nodeID(edge.src), srcPortSuffix, nodeID(edge.dst), dstPortSuffix))
 		}
 	}
 
@@ -281,7 +271,7 @@ func sortedKeys[T any](m map[string]T) []string {
 	return result
 }
 
-func (g *Graph) makeNodeLabel(node *node) string {
+func (g *Graph) makeNodeLabel(node *model.Definition) string {
 	switch normalizeKind(node.Kind, g.interfacesAsUnions) {
 	case ast.Object:
 		return g.makeFieldTableNodeLabel(node)
@@ -314,6 +304,10 @@ func colorForKind(kind ast.DefinitionKind) string {
 	}
 }
 
+func nodeID(n *model.Definition) string {
+	return "n_" + n.Name
+}
+
 func portName(fieldName string) string {
 	return "p_" + fieldName
 }
@@ -322,7 +316,7 @@ func portNameForArgument(fieldName, argName string) string {
 	return "p_" + fieldName + "_" + argName
 }
 
-func makeEnumLabel(node *node) string {
+func makeEnumLabel(node *model.Definition) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`  <TR><TD PORT="main" BGCOLOR="%s">enum %s</TD></TR>`, colorForKind(node.Kind), node.Name)
 	for _, val := range node.EnumValues {
@@ -332,7 +326,7 @@ func makeEnumLabel(node *node) string {
 	return result
 }
 
-func makePolymorphicLabel(node *node) string {
+func makePolymorphicLabel(node *model.Definition) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`  <TR><TD PORT="main" BGCOLOR="%s">%s %s</TD></TR>`, colorForKind(node.Kind), strings.ToLower(string(node.Kind)), node.Name)
 	for _, possibleType := range node.PossibleTypes {
@@ -342,7 +336,7 @@ func makePolymorphicLabel(node *node) string {
 	return result
 }
 
-func (g *Graph) makeFieldTableNodeLabel(node *node) string {
+func (g *Graph) makeFieldTableNodeLabel(node *model.Definition) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="%s">%s %s</TD></TR>`+"\n", colorForKind(node.Kind), strings.ToLower(string(node.Kind)), node.Name)
 	for _, field := range node.Fields {
@@ -359,7 +353,7 @@ func (g *Graph) makeFieldTableNodeLabel(node *node) string {
 	return result
 }
 
-func makeInputObjectNodeLabel(node *node) string {
+func makeInputObjectNodeLabel(node *model.Definition) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`  <TR><TD COLSPAN="2" PORT="main" BGCOLOR="%s">input %s</TD></TR>`+"\n", colorForKind(node.Kind), node.Name)
 	for _, field := range node.Fields {
@@ -369,6 +363,6 @@ func makeInputObjectNodeLabel(node *node) string {
 	return result
 }
 
-func makeGenericNodeLabel(node *node) string {
+func makeGenericNodeLabel(node *model.Definition) string {
 	return fmt.Sprintf("%s\n%s", strings.ToLower(string(node.Kind)), node.Name)
 }
