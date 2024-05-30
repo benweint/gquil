@@ -5,7 +5,7 @@ import "github.com/benweint/gquil/pkg/model"
 type edgeKind int
 
 const (
-	edgeKindField = iota
+	edgeKindField edgeKind = iota
 	edgeKindInputField
 	edgeKindArgument
 	edgeKindPossibleType

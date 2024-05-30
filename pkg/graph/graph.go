@@ -54,9 +54,7 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 	}
 
 	for _, t := range defs {
-		g.nodes[t.Name] = &node{
-			Definition: t,
-		}
+		g.nodes[t.Name] = &node{Definition: t}
 	}
 
 	for _, t := range defs {
@@ -64,82 +62,101 @@ func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
 		kind := normalizeKind(t.Kind, g.interfacesAsUnions)
 		switch kind {
 		case ast.Object:
-			for _, f := range t.Fields {
-				targetType := f.Type.Unwrap()
-				targetTypeKind := targetType.Kind
-				if targetTypeKind == model.ScalarKind {
-					continue
-				}
-				srcNode := g.nodes[t.Name]
-				dstNode := g.nodes[targetType.Name]
-				if srcNode == nil || dstNode == nil {
-					continue
-				}
-				e := &edge{
-					src:   srcNode,
-					dst:   dstNode,
-					kind:  edgeKindField,
-					field: f,
-				}
-				typeEdges = append(typeEdges, e)
-
-				for _, arg := range f.Arguments {
-					targetType := arg.Type.Unwrap()
-					if targetType.Kind == model.ScalarKind {
-						continue
-					}
-					dstNode := g.nodes[targetType.Name]
-					if dstNode == nil {
-						continue
-					}
-					typeEdges = append(typeEdges, &edge{
-						src:      srcNode,
-						dst:      g.nodes[targetType.Name],
-						kind:     edgeKindArgument,
-						field:    f,
-						argument: arg,
-					})
-				}
-			}
+			typeEdges = g.makeFieldEdges(t)
 		case ast.InputObject:
-			for _, f := range t.InputFields {
-				targetType := f.Type.Unwrap()
-				targetTypeKind := targetType.Kind
-				if targetTypeKind == model.ScalarKind {
-					continue
-				}
-				srcNode := g.nodes[t.Name]
-				dstNode := g.nodes[targetType.Name]
-				if srcNode == nil || dstNode == nil {
-					continue
-				}
-				edge := &edge{
-					src:        srcNode,
-					dst:        dstNode,
-					kind:       edgeKindInputField,
-					inputField: f,
-				}
-				typeEdges = append(typeEdges, edge)
-			}
+			typeEdges = g.makeInputEdges(t)
 		case ast.Union:
-			for _, pt := range t.PossibleTypes {
-				srcNode := g.nodes[t.Name]
-				dstNode := g.nodes[pt]
-				if srcNode == nil || dstNode == nil {
-					continue
-				}
-				typeEdges = append(typeEdges, &edge{
-					src:          srcNode,
-					dst:          dstNode,
-					kind:         edgeKindPossibleType,
-					possibleType: pt,
-				})
-			}
+			typeEdges = g.makeUnionEdges(t)
 		}
 		g.edges[t.Name] = typeEdges
 	}
 
 	return g
+}
+
+func (g *Graph) makeFieldEdges(t *model.Definition) []*edge {
+	var result []*edge
+	for _, f := range t.Fields {
+		fieldEdge := g.makeFieldEdge(t, f.Type.Unwrap(), f, nil)
+		if fieldEdge == nil {
+			continue
+		}
+		result = append(result, fieldEdge)
+		for _, arg := range f.Arguments {
+			argEdge := g.makeFieldEdge(t, arg.Type.Unwrap(), f, arg)
+			if argEdge == nil {
+				continue
+			}
+			result = append(result, argEdge)
+		}
+	}
+	return result
+}
+
+func (g *Graph) makeInputEdges(t *model.Definition) []*edge {
+	var result []*edge
+	for _, f := range t.InputFields {
+		targetType := f.Type.Unwrap()
+		if targetType.Kind == model.ScalarKind {
+			continue
+		}
+		srcNode := g.nodes[t.Name]
+		dstNode := g.nodes[targetType.Name]
+		if srcNode == nil || dstNode == nil {
+			continue
+		}
+		result = append(result, &edge{
+			src:        srcNode,
+			dst:        dstNode,
+			kind:       edgeKindInputField,
+			inputField: f,
+		})
+	}
+	return result
+}
+
+func (g *Graph) makeUnionEdges(t *model.Definition) []*edge {
+	var result []*edge
+	for _, possibleType := range t.PossibleTypes {
+		srcNode := g.nodes[t.Name]
+		dstNode := g.nodes[possibleType]
+		if srcNode == nil || dstNode == nil {
+			continue
+		}
+		result = append(result, &edge{
+			src:          srcNode,
+			dst:          dstNode,
+			kind:         edgeKindPossibleType,
+			possibleType: possibleType,
+		})
+	}
+	return result
+}
+
+func (g *Graph) makeFieldEdge(src *model.Definition, targetType *model.Type, f *model.FieldDefinition, arg *model.InputValueDefinition) *edge {
+	kind := edgeKindField
+
+	if arg != nil {
+		targetType = arg.Type.Unwrap()
+		kind = edgeKindArgument
+	}
+
+	targetTypeKind := targetType.Kind
+	if targetTypeKind == model.ScalarKind {
+		return nil
+	}
+	srcNode := g.nodes[src.Name]
+	dstNode := g.nodes[targetType.Name]
+	if srcNode == nil || dstNode == nil {
+		return nil
+	}
+	return &edge{
+		src:      srcNode,
+		dst:      dstNode,
+		kind:     kind,
+		field:    f,
+		argument: arg,
+	}
 }
 
 func (g *Graph) GetDefinitions() model.DefinitionList {
