@@ -2,6 +2,8 @@ package model
 
 import (
 	"encoding/json"
+	"slices"
+	"strings"
 
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -26,6 +28,12 @@ type FieldDefinition struct {
 
 // FieldDefinitionList represents a set of fields definitions on the same object, interface, or input type.
 type FieldDefinitionList []*FieldDefinition
+
+func (fdl FieldDefinitionList) Sort() {
+	slices.SortFunc[FieldDefinitionList, *FieldDefinition](fdl, func(a, b *FieldDefinition) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+}
 
 func (fd *FieldDefinition) MarshalJSON() ([]byte, error) {
 	m := map[string]any{

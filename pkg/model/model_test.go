@@ -51,7 +51,7 @@ func (tc *testCase) run(t *testing.T) {
 	ss.Types = filterBuiltinTypesAndFields(ss.Types)
 	ss.Directives = filterBuiltinDirectives(ss.Directives)
 
-	actual, err := json.Marshal(ss)
+	actual, err := json.MarshalIndent(ss, "", "  ")
 	assert.NoError(t, err)
 
 	updateExpected := os.Getenv("TEST_UPDATE_EXPECTED") != ""

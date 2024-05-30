@@ -2,16 +2,16 @@ package commands
 
 import (
 	"slices"
-	"strings"
 
 	"github.com/benweint/gquil/pkg/model"
 )
 
 type LsFieldsCmd struct {
 	InputOptions
-	OnType      string `name:"on-type" group:"filtering" help:"Only include fields which appear on the specified type."`
-	OfType      string `name:"of-type" group:"filtering" help:"Only include fields of the specified type. List and non-null types will be treated as being of their underlying wrapped type for the purposes of this filtering."`
-	IncludeArgs bool   `name:"include-args" group:"output" help:"Include argument definitions in human-readable output. Has no effect with --json."`
+	OnType        string `name:"on-type" group:"filtering" help:"Only include fields which appear on the specified type."`
+	OfType        string `name:"of-type" group:"filtering" help:"Only include fields of the specified type. List and non-null types will be treated as being of their underlying wrapped type for the purposes of this filtering."`
+	ReturningType string `name:"returning-type" group:"filtering" help:"Only include fields which may return the specified type, which may be a concrete type, list, non-null, interface, or union."`
+	IncludeArgs   bool   `name:"include-args" group:"output" help:"Include argument definitions in human-readable output. Has no effect with --json."`
 	IncludeDirectivesOption
 	OutputOptions
 	FilteringOptions
@@ -41,14 +41,14 @@ func (c LsFieldsCmd) Run(ctx Context) error {
 			if c.OfType != "" && c.OfType != f.Type.Unwrap().String() {
 				continue
 			}
+			if c.ReturningType != "" && !fieldMightReturn(s, f, c.ReturningType) {
+				continue
+			}
 			f.Name = t.Name + "." + f.Name
 			fields = append(fields, f)
 		}
 	}
-
-	slices.SortFunc(fields, func(a, b *model.FieldDefinition) int {
-		return strings.Compare(a.Name, b.Name)
-	})
+	fields.Sort()
 
 	if c.Json {
 		return ctx.PrintJson(fields)
@@ -70,4 +70,18 @@ func (c LsFieldsCmd) Run(ctx Context) error {
 	}
 
 	return nil
+}
+
+func fieldMightReturn(s *model.Schema, field *model.FieldDefinition, typeName string) bool {
+	underlyingType := field.Type.Unwrap()
+	if underlyingType.Name == typeName {
+		return true
+	}
+
+	referencedType := s.Types[field.Type.Unwrap().Name]
+	if referencedType != nil && slices.Contains(referencedType.PossibleTypes, typeName) {
+		return true
+	}
+
+	return false
 }
