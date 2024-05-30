@@ -16,12 +16,18 @@ type CLI struct {
 	Version       VersionCmd       `cmd:"" help:"Print the version of gquil and exit."`
 }
 
+const description = `Inspect, visualize, and transform GraphQL schemas.
+
+For more documentation, or to report an issue:
+https://github.com/benweint/gquil
+`
+
 func MakeParser(opts ...kong.Option) (*kong.Kong, error) {
 	var cli CLI
 
 	defaultOptions := []kong.Option{
 		kong.Name("gquil"),
-		kong.Description("Inspect, visualize, and transform GraphQL schemas."),
+		kong.Description(description),
 		kong.UsageOnError(),
 		kong.ExplicitGroups(Groups),
 	}
