@@ -30,7 +30,7 @@ func (s *Schema) ResolveNames(names []string) ([]*NameReference, error) {
 	var roots []*NameReference
 	var badNames []string
 	for _, rootName := range names {
-		root := s.ResolveName(rootName)
+		root := s.resolveName(rootName)
 		if root == nil {
 			badNames = append(badNames, rootName)
 		} else {
@@ -45,7 +45,7 @@ func (s *Schema) ResolveNames(names []string) ([]*NameReference, error) {
 	return roots, nil
 }
 
-func (s *Schema) ResolveName(name string) *NameReference {
+func (s *Schema) resolveName(name string) *NameReference {
 	parts := strings.SplitN(name, ".", 2)
 	typePart := parts[0]
 	for _, def := range s.Types {
@@ -73,6 +73,9 @@ func (s *Schema) ResolveName(name string) *NameReference {
 	return nil
 }
 
+// MakeSchema constructs and returns a Schema from the given ast.Schema.
+// The provided ast.Schema must be 'complete' in the sense that it must contain type definitions
+// for all types used in the schema, including built-in types like String, Int, etc.
 func MakeSchema(in *ast.Schema) (*Schema, error) {
 	var types DefinitionList
 	typesByName := map[string]*Definition{}
@@ -112,16 +115,22 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 	// Resolve type kinds for named types by looking them up in typesByName
 	for _, t := range types {
 		for _, f := range t.Fields {
-			resolveTypeKinds(typesByName, f.Type)
+			if err := resolveTypeKinds(typesByName, f.Type); err != nil {
+				return nil, err
+			}
 			for _, a := range f.Arguments {
-				resolveTypeKinds(typesByName, a.Type)
+				if err := resolveTypeKinds(typesByName, a.Type); err != nil {
+					return nil, err
+				}
 			}
 		}
 	}
 
 	for _, d := range directives {
 		for _, arg := range d.Arguments {
-			resolveTypeKinds(typesByName, arg.Type)
+			if err := resolveTypeKinds(typesByName, arg.Type); err != nil {
+				return nil, err
+			}
 		}
 	}
 

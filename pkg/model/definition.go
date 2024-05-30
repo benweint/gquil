@@ -109,10 +109,15 @@ func maybeTypeName(in *ast.Definition) string {
 	return in.Name
 }
 
-func resolveTypeKinds(typesByName map[string]*Definition, t *Type) {
+func resolveTypeKinds(typesByName map[string]*Definition, t *Type) error {
 	if t.OfType != nil {
-		resolveTypeKinds(typesByName, t.OfType)
+		return resolveTypeKinds(typesByName, t.OfType)
 	} else {
-		t.Kind = TypeKind(typesByName[t.Name].Kind)
+		referencedType, ok := typesByName[t.Name]
+		if !ok {
+			return fmt.Errorf("could not resolve type named '%s'", t.Name)
+		}
+		t.Kind = TypeKind(referencedType.Kind)
 	}
+	return nil
 }
