@@ -1,8 +1,8 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
-	"sort"
 	"strings"
 
 	"github.com/vektah/gqlparser/v2/ast"
@@ -13,17 +13,45 @@ import (
 // The QueryType, MutationType, and SubscriptionType fields have been suffixed with 'Name' and
 // are represented as strings referring to named types, rather than nested objects.
 type Schema struct {
-	Description          string                  `json:"description,omitempty"`
-	Types                DefinitionList          `json:"types"`
-	QueryTypeName        string                  `json:"queryTypeName,omitempty"`
-	MutationTypeName     string                  `json:"mutationTypeName,omitempty"`
-	SubscriptionTypeName string                  `json:"subscriptionTypeName,omitempty"`
-	Directives           DirectiveDefinitionList `json:"directives,omitempty"`
+	Description          string
+	Types                DefinitionMap
+	QueryTypeName        string
+	MutationTypeName     string
+	SubscriptionTypeName string
+	Directives           DirectiveDefinitionList
 }
 
 func (s *Schema) FilterBuiltins() {
 	s.Types = filterBuiltinTypesAndFields(s.Types)
 	s.Directives = filterBuiltinDirectives(s.Directives)
+}
+
+func (s *Schema) MarshalJSON() ([]byte, error) {
+	m := map[string]any{
+		"types": s.Types.ToSortedList(),
+	}
+
+	if s.Description != "" {
+		m["description"] = s.Description
+	}
+
+	if s.QueryTypeName != "" {
+		m["queryTypeName"] = s.QueryTypeName
+	}
+
+	if s.MutationTypeName != "" {
+		m["mutationTypeName"] = s.MutationTypeName
+	}
+
+	if s.SubscriptionTypeName != "" {
+		m["subscriptionTypeName"] = s.SubscriptionTypeName
+	}
+
+	if len(s.Directives) > 0 {
+		m["directives"] = s.Directives
+	}
+
+	return json.Marshal(m)
 }
 
 func (s *Schema) ResolveNames(names []string) ([]*NameReference, error) {
@@ -77,8 +105,7 @@ func (s *Schema) resolveName(name string) *NameReference {
 // The provided ast.Schema must be 'complete' in the sense that it must contain type definitions
 // for all types used in the schema, including built-in types like String, Int, etc.
 func MakeSchema(in *ast.Schema) (*Schema, error) {
-	var types DefinitionList
-	typesByName := map[string]*Definition{}
+	typesByName := DefinitionMap{}
 	for _, def := range in.Types {
 		t, err := makeDefinition(def)
 		if err != nil {
@@ -93,15 +120,8 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 			t.PossibleTypes = possibleTypes
 		}
 
-		types = append(types, t)
 		typesByName[t.Name] = t
 	}
-
-	// We sort here in order to ensure a deterministic ordering of types in the JSON representation,
-	// since ast.Definition.Types is a map, which does not preserve ordering.
-	sort.Slice(types, func(i, j int) bool {
-		return strings.Compare(types[i].Name, types[j].Name) < 0
-	})
 
 	var directives DirectiveDefinitionList
 	for _, dd := range in.Directives {
@@ -113,7 +133,7 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 	}
 
 	// Resolve type kinds for named types by looking them up in typesByName
-	for _, t := range types {
+	for _, t := range typesByName {
 		for _, f := range t.Fields {
 			if err := resolveTypeKinds(typesByName, f.Type); err != nil {
 				return nil, err
@@ -136,7 +156,7 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 
 	return &Schema{
 		Description:          in.Description,
-		Types:                types,
+		Types:                typesByName,
 		QueryTypeName:        maybeTypeName(in.Query),
 		MutationTypeName:     maybeTypeName(in.Mutation),
 		SubscriptionTypeName: maybeTypeName(in.Subscription),

@@ -3,6 +3,8 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -70,6 +72,39 @@ func (d *Definition) MarshalJSON() ([]byte, error) {
 
 type DefinitionList []*Definition
 
+func (d DefinitionList) Sort() {
+	slices.SortFunc[DefinitionList, *Definition](d, func(a, b *Definition) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+}
+
+func (d DefinitionList) ToMap() DefinitionMap {
+	result := DefinitionMap{}
+	for _, def := range d {
+		result[def.Name] = def
+	}
+	return result
+}
+
+type DefinitionMap map[string]*Definition
+
+func (d DefinitionMap) ToSortedList() DefinitionList {
+	var result DefinitionList
+	for _, def := range d {
+		result = append(result, def)
+	}
+	result.Sort()
+	return result
+}
+
+func MakeDefinitionMap(in DefinitionList) DefinitionMap {
+	result := DefinitionMap{}
+	for _, def := range in {
+		result[def.Name] = def
+	}
+	return result
+}
+
 func makeDefinition(in *ast.Definition) (*Definition, error) {
 	def := &Definition{
 		Kind:          in.Kind,
@@ -109,7 +144,7 @@ func maybeTypeName(in *ast.Definition) string {
 	return in.Name
 }
 
-func resolveTypeKinds(typesByName map[string]*Definition, t *Type) error {
+func resolveTypeKinds(typesByName DefinitionMap, t *Type) error {
 	if t.OfType != nil {
 		return resolveTypeKinds(typesByName, t.OfType)
 	} else {

@@ -24,10 +24,6 @@ func loadSchemaModel(paths []string) (*model.Schema, error) {
 		return nil, err
 	}
 
-	sort.Slice(s.Types, func(i, j int) bool {
-		return strings.Compare(s.Types[i].Name, s.Types[j].Name) < 0
-	})
-
 	sort.Slice(s.Directives, func(i, j int) bool {
 		return strings.Compare(s.Directives[i].Name, s.Directives[j].Name) < 0
 	})

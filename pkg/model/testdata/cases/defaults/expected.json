@@ -1,0 +1,103 @@
+{
+  "queryTypeName": "Query",
+  "types": [
+    {
+      "inputFields": [
+        {
+          "name": "substring",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
+        },
+        {
+          "name": "regex",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
+        }
+      ],
+      "kind": "INPUT_OBJECT",
+      "name": "Match"
+    },
+    {
+      "fields": [
+        {
+          "arguments": [
+            {
+              "defaultValue": {
+                "limit": 10,
+                "match": {
+                  "substring": "foo"
+                }
+              },
+              "name": "q",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SearchQuery"
+              },
+              "typeName": "SearchQuery",
+              "underlyingTypeName": "SearchQuery"
+            }
+          ],
+          "name": "search",
+          "type": {
+            "kind": "LIST",
+            "ofType": {
+              "kind": "OBJECT",
+              "name": "Result"
+            }
+          },
+          "typeName": "[Result]",
+          "underlyingTypeName": "Result"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Query"
+    },
+    {
+      "fields": [
+        {
+          "name": "title",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Result"
+    },
+    {
+      "inputFields": [
+        {
+          "name": "match",
+          "type": {
+            "kind": "INPUT_OBJECT",
+            "name": "Match"
+          },
+          "typeName": "Match",
+          "underlyingTypeName": "Match"
+        },
+        {
+          "name": "limit",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int"
+          },
+          "typeName": "Int",
+          "underlyingTypeName": "Int"
+        }
+      ],
+      "kind": "INPUT_OBJECT",
+      "name": "SearchQuery"
+    }
+  ]
+}

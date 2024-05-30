@@ -164,7 +164,7 @@ func TestApplyFieldFilters(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			s := &model.Schema{
-				Types: exampleDefs,
+				Types: exampleDefs.ToMap(),
 			}
 			roots, err := s.ResolveNames(tc.roots)
 			assert.NoError(t, err)

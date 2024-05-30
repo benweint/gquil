@@ -1,0 +1,58 @@
+{
+  "directives": [
+    {
+      "arguments": [
+        {
+          "defaultValue": "because i said so",
+          "name": "reason",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
+        }
+      ],
+      "description": "",
+      "locations": [
+        "OBJECT",
+        "FIELD_DEFINITION"
+      ],
+      "name": "fancy",
+      "repeatable": false
+    }
+  ],
+  "types": [
+    {
+      "directives": [
+        {
+          "arguments": [
+            {
+              "name": "reason",
+              "value": "it just is"
+            }
+          ],
+          "name": "fancy"
+        }
+      ],
+      "fields": [
+        {
+          "directives": [
+            {
+              "name": "fancy"
+            }
+          ],
+          "name": "name",
+          "type": {
+            "kind": "SCALAR",
+            "name": "String"
+          },
+          "typeName": "String",
+          "underlyingTypeName": "String"
+        }
+      ],
+      "kind": "OBJECT",
+      "name": "Foo"
+    }
+  ]
+}

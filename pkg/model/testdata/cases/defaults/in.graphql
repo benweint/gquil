@@ -1,0 +1,17 @@
+input SearchQuery {
+    match: Match
+    limit: Int
+}
+
+input Match {
+    substring: String
+    regex: String
+}
+
+type Query {
+    search(q: SearchQuery = {match: {substring: "foo"}, limit: 10}): [Result]
+}
+
+type Result {
+    title: String
+}

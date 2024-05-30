@@ -159,10 +159,10 @@ func (g *Graph) makeFieldEdge(src *model.Definition, targetType *model.Type, f *
 	}
 }
 
-func (g *Graph) GetDefinitions() model.DefinitionList {
-	var result model.DefinitionList
+func (g *Graph) GetDefinitions() model.DefinitionMap {
+	result := model.DefinitionMap{}
 	for _, node := range g.nodes {
-		result = append(result, node.Definition)
+		result[node.Name] = node.Definition
 	}
 	return result
 }

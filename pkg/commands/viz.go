@@ -26,7 +26,7 @@ func (c *VizCmd) Run(ctx Context) error {
 		opts = append(opts, graph.WithBuiltins(true))
 	}
 
-	g := graph.MakeGraph(s.Types, opts...)
+	g := graph.MakeGraph(s.Types.ToSortedList(), opts...)
 
 	if len(c.From) > 0 {
 		roots, err := s.ResolveNames(c.From)

@@ -4,14 +4,14 @@ import (
 	"github.com/benweint/gquil/pkg/astutil"
 )
 
-func filterBuiltinTypesAndFields(defs DefinitionList) DefinitionList {
-	var result DefinitionList
+func filterBuiltinTypesAndFields(defs DefinitionMap) DefinitionMap {
+	result := DefinitionMap{}
 	for _, def := range defs {
 		if astutil.IsBuiltinType(def.Name) {
 			continue
 		}
 		def.Fields = filterBuiltinFields(def.Fields)
-		result = append(result, def)
+		result[def.Name] = def
 	}
 	return result
 }

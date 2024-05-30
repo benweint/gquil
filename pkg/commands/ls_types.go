@@ -59,10 +59,7 @@ func (c LsTypesCmd) Run(ctx Context) error {
 
 		types = append(types, t)
 	}
-
-	slices.SortFunc(types, func(a, b *model.Definition) int {
-		return strings.Compare(a.Name, b.Name)
-	})
+	types.Sort()
 
 	if c.Json {
 		return ctx.PrintJson(types)

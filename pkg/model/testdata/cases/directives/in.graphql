@@ -1,0 +1,5 @@
+directive @fancy(reason: String = "because i said so") on OBJECT | FIELD_DEFINITION
+
+type Foo @fancy(reason: "it just is") {
+    name: String @fancy
+}
