@@ -15,7 +15,6 @@ type Graph struct {
 	edges              map[string][]*edge
 	interfacesAsUnions bool
 	renderBuiltins     bool
-	opts               []GraphOption
 }
 
 func normalizeKind(kind ast.DefinitionKind, interfacesAsUnions bool) ast.DefinitionKind {
@@ -42,29 +41,26 @@ func WithBuiltins(renderBuiltins bool) GraphOption {
 	}
 }
 
-func MakeGraph(defs model.DefinitionList, opts ...GraphOption) *Graph {
+func MakeGraph(s *model.Schema, opts ...GraphOption) *Graph {
 	g := &Graph{
 		nodes: map[string]*node{},
 		edges: map[string][]*edge{},
-		opts:  opts,
 	}
 
 	for _, opt := range opts {
 		opt(g)
 	}
 
-	for _, t := range defs {
+	for _, t := range s.Types {
 		g.nodes[t.Name] = &node{Definition: t}
 	}
 
-	for _, t := range defs {
+	for _, t := range s.Types {
 		var typeEdges []*edge
 		kind := normalizeKind(t.Kind, g.interfacesAsUnions)
 		switch kind {
-		case ast.Object:
+		case ast.Object, ast.InputObject:
 			typeEdges = g.makeFieldEdges(t)
-		case ast.InputObject:
-			typeEdges = g.makeInputEdges(t)
 		case ast.Union:
 			typeEdges = g.makeUnionEdges(t)
 		}
@@ -89,28 +85,6 @@ func (g *Graph) makeFieldEdges(t *model.Definition) []*edge {
 			}
 			result = append(result, argEdge)
 		}
-	}
-	return result
-}
-
-func (g *Graph) makeInputEdges(t *model.Definition) []*edge {
-	var result []*edge
-	for _, f := range t.Fields {
-		targetType := f.Type.Unwrap()
-		if targetType.Kind == model.ScalarKind {
-			continue
-		}
-		srcNode := g.nodes[t.Name]
-		dstNode := g.nodes[targetType.Name]
-		if srcNode == nil || dstNode == nil {
-			continue
-		}
-		result = append(result, &edge{
-			src:   srcNode,
-			dst:   dstNode,
-			kind:  edgeKindInputField,
-			field: f,
-		})
 	}
 	return result
 }
@@ -177,7 +151,7 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 	}
 	rootDefs := applyFieldFilters(defs, roots)
 
-	seen := map[string]*model.Definition{}
+	seen := model.DefinitionMap{}
 
 	var traverse func(def *model.Definition, depth int)
 	traverse = func(def *model.Definition, depth int) {
@@ -216,12 +190,30 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 		traverse(root, 1)
 	}
 
-	var newDefs model.DefinitionList
-	for _, def := range seen {
-		newDefs = append(newDefs, def)
+	filteredNodes := map[string]*node{}
+	for name, node := range g.nodes {
+		if _, ok := seen[name]; ok {
+			filteredNodes[name] = node
+		}
 	}
 
-	return MakeGraph(newDefs, g.opts...)
+	filteredEdges := map[string][]*edge{}
+	for from, edges := range g.edges {
+		var filtered []*edge
+		for _, edge := range edges {
+			if _, ok := g.nodes[edge.src.Name]; ok {
+				filtered = append(filtered, edge)
+			}
+		}
+		filteredEdges[from] = filtered
+	}
+
+	return &Graph{
+		nodes:              filteredNodes,
+		edges:              filteredEdges,
+		interfacesAsUnions: g.interfacesAsUnions,
+		renderBuiltins:     g.renderBuiltins,
+	}
 }
 
 func (g *Graph) ToDot() string {
@@ -265,7 +257,7 @@ func (g *Graph) buildEdgeDefs() []string {
 			}
 
 			switch edge.kind {
-			case edgeKindField, edgeKindInputField:
+			case edgeKindField:
 				srcPortSuffix = ":" + portName(edge.field.Name)
 			case edgeKindArgument:
 				srcPortSuffix = ":" + portNameForArgument(edge.field.Name, edge.argument.Name)

@@ -49,7 +49,7 @@ func (o GraphFilteringOptions) filterSchema(s *model.Schema) error {
 		return err
 	}
 
-	g := graph.MakeGraph(s.Types.ToSortedList()).ReachableFrom(roots, o.Depth)
+	g := graph.MakeGraph(s).ReachableFrom(roots, o.Depth)
 	s.Types = g.GetDefinitions()
 	return nil
 }

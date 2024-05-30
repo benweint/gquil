@@ -6,7 +6,6 @@ type edgeKind int
 
 const (
 	edgeKindField edgeKind = iota
-	edgeKindInputField
 	edgeKindArgument
 	edgeKindPossibleType
 )
