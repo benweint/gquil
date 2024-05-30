@@ -63,19 +63,6 @@ func makeInputValueDefinitionListFromArgs(in ast.ArgumentDefinitionList) (InputV
 	return result, nil
 }
 
-func makeInputValueDefinitionListFromFields(in ast.FieldList) (InputValueDefinitionList, error) {
-	var result InputValueDefinitionList
-	for _, f := range in {
-		inputValueDef, err := makeInputValueDefinition(f.Name, f.Description, f.Type, f.Directives, f.DefaultValue)
-		if err != nil {
-			return nil, err
-		}
-
-		result = append(result, inputValueDef)
-	}
-	return result, nil
-}
-
 func makeInputValueDefinition(name, description string, inType *ast.Type, inDirectives ast.DirectiveList, inDefaultValue *ast.Value) (*InputValueDefinition, error) {
 	defaultValue, err := makeValue(inDefaultValue)
 	if err != nil {

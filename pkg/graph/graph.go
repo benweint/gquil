@@ -95,7 +95,7 @@ func (g *Graph) makeFieldEdges(t *model.Definition) []*edge {
 
 func (g *Graph) makeInputEdges(t *model.Definition) []*edge {
 	var result []*edge
-	for _, f := range t.InputFields {
+	for _, f := range t.Fields {
 		targetType := f.Type.Unwrap()
 		if targetType.Kind == model.ScalarKind {
 			continue
@@ -106,10 +106,10 @@ func (g *Graph) makeInputEdges(t *model.Definition) []*edge {
 			continue
 		}
 		result = append(result, &edge{
-			src:        srcNode,
-			dst:        dstNode,
-			kind:       edgeKindInputField,
-			inputField: f,
+			src:   srcNode,
+			dst:   dstNode,
+			kind:  edgeKindInputField,
+			field: f,
 		})
 	}
 	return result
@@ -195,18 +195,13 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 		kind := normalizeKind(def.Kind, g.interfacesAsUnions)
 
 		switch kind {
-		case ast.Object:
+		case ast.Object, ast.InputObject:
 			for _, field := range def.Fields {
 				for _, arg := range field.Arguments {
 					argType := arg.Type.Unwrap()
 					traverse(defMap[argType.Name], depth+1)
 				}
 
-				underlyingType := field.Type.Unwrap()
-				traverse(defMap[underlyingType.Name], depth+1)
-			}
-		case ast.InputObject:
-			for _, field := range def.InputFields {
 				underlyingType := field.Type.Unwrap()
 				traverse(defMap[underlyingType.Name], depth+1)
 			}
@@ -377,7 +372,7 @@ func (g *Graph) makeFieldTableNodeLabel(node *node) string {
 func makeInputObjectNodeLabel(node *node) string {
 	result := "<TABLE>\n"
 	result += fmt.Sprintf(`  <TR><TD COLSPAN="2" PORT="main" BGCOLOR="%s">input %s</TD></TR>`+"\n", colorForKind(node.Kind), node.Name)
-	for _, field := range node.InputFields {
+	for _, field := range node.Fields {
 		result += fmt.Sprintf(`  <TR><TD>%s</TD><TD PORT="%s">%s</TD></TR>`+"\n", field.Name, portName(field.Name), field.Type)
 	}
 	result += "</TABLE>"

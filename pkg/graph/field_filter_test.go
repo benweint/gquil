@@ -54,7 +54,7 @@ func TestApplyFieldFilters(t *testing.T) {
 		{
 			Name: "InputA",
 			Kind: ast.InputObject,
-			InputFields: model.InputValueDefinitionList{
+			Fields: model.FieldDefinitionList{
 				{
 					Name: "a",
 				},
@@ -173,10 +173,6 @@ func TestApplyFieldFilters(t *testing.T) {
 			var actualFieldNames []string
 			for _, def := range filtered {
 				for _, field := range def.Fields {
-					fieldName := fmt.Sprintf("%s.%s", def.Name, field.Name)
-					actualFieldNames = append(actualFieldNames, fieldName)
-				}
-				for _, field := range def.InputFields {
 					fieldName := fmt.Sprintf("%s.%s", def.Name, field.Name)
 					actualFieldNames = append(actualFieldNames, fieldName)
 				}

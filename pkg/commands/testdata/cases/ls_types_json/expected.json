@@ -1,7 +1,5 @@
 [
   {
-    "kind": "OBJECT",
-    "name": "Apple",
     "directives": [
       {
         "name": "key",
@@ -46,11 +44,11 @@
     ],
     "interfaces": [
       "Edible"
-    ]
+    ],
+    "kind": "OBJECT",
+    "name": "Apple"
   },
   {
-    "kind": "ENUM",
-    "name": "AppleVariety",
     "enumValues": [
       {
         "name": "FUJI"
@@ -61,11 +59,11 @@
       {
         "name": "GRANNY_SMITH"
       }
-    ]
+    ],
+    "kind": "ENUM",
+    "name": "AppleVariety"
   },
   {
-    "kind": "OBJECT",
-    "name": "Biscuit",
     "fields": [
       {
         "name": "calories",
@@ -79,11 +77,11 @@
     ],
     "interfaces": [
       "Edible"
-    ]
+    ],
+    "kind": "OBJECT",
+    "name": "Biscuit"
   },
   {
-    "kind": "INTERFACE",
-    "name": "Edible",
     "fields": [
       {
         "name": "calories",
@@ -95,6 +93,8 @@
         "underlyingTypeName": "Int"
       }
     ],
+    "kind": "INTERFACE",
+    "name": "Edible",
     "possibleTypeNames": [
       "Apple",
       "Orange",
@@ -106,8 +106,6 @@
     "name": "FieldSet"
   },
   {
-    "kind": "INPUT_OBJECT",
-    "name": "Filter",
     "inputFields": [
       {
         "name": "nameLike",
@@ -127,7 +125,9 @@
         "typeName": "Int",
         "underlyingTypeName": "Int"
       }
-    ]
+    ],
+    "kind": "INPUT_OBJECT",
+    "name": "Filter"
   },
   {
     "kind": "UNION",
@@ -138,8 +138,6 @@
     ]
   },
   {
-    "kind": "OBJECT",
-    "name": "Measurements",
     "fields": [
       {
         "name": "height",
@@ -168,11 +166,11 @@
         "typeName": "Int",
         "underlyingTypeName": "Int"
       }
-    ]
+    ],
+    "kind": "OBJECT",
+    "name": "Measurements"
   },
   {
-    "kind": "OBJECT",
-    "name": "Orange",
     "fields": [
       {
         "name": "variety",
@@ -195,11 +193,11 @@
     ],
     "interfaces": [
       "Edible"
-    ]
+    ],
+    "kind": "OBJECT",
+    "name": "Orange"
   },
   {
-    "kind": "ENUM",
-    "name": "OrangeVariety",
     "enumValues": [
       {
         "name": "VALENCIA"
@@ -210,11 +208,11 @@
       {
         "name": "CARA_CARA"
       }
-    ]
+    ],
+    "kind": "ENUM",
+    "name": "OrangeVariety"
   },
   {
-    "kind": "OBJECT",
-    "name": "Query",
     "fields": [
       {
         "arguments": [
@@ -285,6 +283,8 @@
         "typeName": "[Edible!]!",
         "underlyingTypeName": "Edible"
       }
-    ]
+    ],
+    "kind": "OBJECT",
+    "name": "Query"
   }
 ]

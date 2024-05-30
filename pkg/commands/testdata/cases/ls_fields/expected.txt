@@ -3,6 +3,8 @@ Apple.measurements: Measurements
 Apple.variety: AppleVariety
 Biscuit.calories: Int
 Edible.calories: Int
+Filter.limit: Int
+Filter.nameLike: String
 Measurements.depth: Int
 Measurements.height: Int
 Measurements.width: Int

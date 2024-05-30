@@ -45,6 +45,24 @@
     "underlyingTypeName": "Int"
   },
   {
+    "name": "Filter.limit",
+    "type": {
+      "kind": "SCALAR",
+      "name": "Int"
+    },
+    "typeName": "Int",
+    "underlyingTypeName": "Int"
+  },
+  {
+    "name": "Filter.nameLike",
+    "type": {
+      "kind": "SCALAR",
+      "name": "String"
+    },
+    "typeName": "String",
+    "underlyingTypeName": "String"
+  },
+  {
     "name": "Measurements.depth",
     "type": {
       "kind": "SCALAR",

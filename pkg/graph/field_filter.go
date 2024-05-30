@@ -51,7 +51,6 @@ func applyFieldFilters(defs model.DefinitionList, roots []*model.NameReference) 
 			PossibleTypes: typeDef.PossibleTypes,
 			EnumValues:    typeDef.EnumValues,
 			Fields:        applyFilter(filter, typeDef.Fields),
-			InputFields:   applyFilter(filter, typeDef.InputFields),
 		}
 
 		result = append(result, filteredDef)

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/vektah/gqlparser/v2/ast"
@@ -8,29 +9,63 @@ import (
 
 // Based on the __Type introspection type: https://spec.graphql.org/October2021/#sec-The-__Type-Type
 type Definition struct {
-	Kind        ast.DefinitionKind `json:"kind"`
-	Name        string             `json:"name"`
-	Description string             `json:"description,omitempty"`
-	Directives  DirectiveList      `json:"directives,omitempty"`
+	Kind        ast.DefinitionKind
+	Name        string
+	Description string
+	Directives  DirectiveList
 
-	// only set for interfaces, objects
-	Fields FieldDefinitionList `json:"fields,omitempty"`
-
-	// only set for input objects
-	InputFields InputValueDefinitionList `json:"inputFields,omitempty"`
+	// only set for interfaces, objects, input objects
+	Fields FieldDefinitionList
 
 	// only set for interfaces
-	Interfaces []string `json:"interfaces,omitempty"`
+	Interfaces []string
 
 	// only set for interfaces & unions
-	PossibleTypes []string `json:"possibleTypeNames,omitempty"`
+	PossibleTypes []string
 
 	// only set for enums
-	EnumValues EnumValueList `json:"enumValues,omitempty"`
+	EnumValues EnumValueList
 }
 
 func (d *Definition) String() string {
 	return fmt.Sprintf("Def{name=%s, kind=%s}", d.Name, d.Kind)
+}
+
+func (d *Definition) MarshalJSON() ([]byte, error) {
+	m := map[string]any{
+		"kind": d.Kind,
+		"name": d.Name,
+	}
+
+	if d.Description != "" {
+		m["description"] = d.Description
+	}
+
+	if len(d.Directives) > 0 {
+		m["directives"] = d.Directives
+	}
+
+	if len(d.Fields) > 0 {
+		fieldsKeyName := "fields"
+		if d.Kind == ast.InputObject {
+			fieldsKeyName = "inputFields"
+		}
+		m[fieldsKeyName] = d.Fields
+	}
+
+	if len(d.Interfaces) > 0 {
+		m["interfaces"] = d.Interfaces
+	}
+
+	if len(d.PossibleTypes) > 0 {
+		m["possibleTypeNames"] = d.PossibleTypes
+	}
+
+	if len(d.EnumValues) > 0 {
+		m["enumValues"] = d.EnumValues
+	}
+
+	return json.Marshal(m)
 }
 
 type DefinitionList []*Definition
@@ -44,18 +79,12 @@ func makeDefinition(in *ast.Definition) (*Definition, error) {
 		PossibleTypes: in.Types,
 	}
 
-	if in.Kind == ast.Object || in.Kind == ast.Interface {
+	if in.Kind == ast.Object || in.Kind == ast.Interface || in.Kind == ast.InputObject {
 		fields, err := makeFieldDefinitionList(in.Fields)
 		if err != nil {
 			return nil, err
 		}
 		def.Fields = fields
-	} else if in.Kind == ast.InputObject {
-		inputFields, err := makeInputValueDefinitionListFromFields(in.Fields)
-		if err != nil {
-			return nil, err
-		}
-		def.InputFields = inputFields
 	}
 
 	directives, err := makeDirectiveList(in.Directives)

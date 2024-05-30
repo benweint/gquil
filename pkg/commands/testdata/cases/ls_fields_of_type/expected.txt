@@ -1,6 +1,7 @@
 Apple.calories: Int
 Biscuit.calories: Int
 Edible.calories: Int
+Filter.limit: Int
 Measurements.depth: Int
 Measurements.height: Int
 Measurements.width: Int

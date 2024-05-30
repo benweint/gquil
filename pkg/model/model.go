@@ -67,16 +67,6 @@ func (s *Schema) ResolveName(name string) *NameReference {
 					}
 				}
 			}
-
-			for _, field := range def.InputFields {
-				if field.Name == fieldPart {
-					return &NameReference{
-						Kind:       InputFieldNameReference,
-						typeRef:    def,
-						inputField: field,
-					}
-				}
-			}
 		}
 	}
 
@@ -126,9 +116,6 @@ func MakeSchema(in *ast.Schema) (*Schema, error) {
 			for _, a := range f.Arguments {
 				resolveTypeKinds(typesByName, a.Type)
 			}
-		}
-		for _, f := range t.InputFields {
-			resolveTypeKinds(typesByName, f.Type)
 		}
 	}
 
