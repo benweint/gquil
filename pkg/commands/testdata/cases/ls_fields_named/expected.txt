@@ -1,0 +1,4 @@
+Apple.calories: Int
+Biscuit.calories: Int
+Edible.calories: Int
+Orange.calories: Int
