@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path"
 	"testing"
@@ -52,27 +51,17 @@ func (tc *testCase) run(t *testing.T) {
 	ss.Types = filterBuiltinTypesAndFields(ss.Types)
 	ss.Directives = filterBuiltinDirectives(ss.Directives)
 
-	jsonTypes, err := json.Marshal(ss)
-	assert.NoError(t, err)
-
-	var actual map[string]any
-	err = json.Unmarshal(jsonTypes, &actual)
-	assert.NoError(t, err)
-
-	rawExpected, err := os.ReadFile(expectedPath)
-	assert.NoError(t, err)
-	var jsonExpected map[string]any
-	err = json.Unmarshal(rawExpected, &jsonExpected)
+	actual, err := json.Marshal(ss)
 	assert.NoError(t, err)
 
 	updateExpected := os.Getenv("TEST_UPDATE_EXPECTED") != ""
 	if updateExpected {
-		newExpected, err := json.MarshalIndent(actual, "", "  ")
-		assert.NoError(t, err)
-		fmt.Printf("BMW: writing to %s\n", expectedPath)
-		err = os.WriteFile(expectedPath, newExpected, 0644)
+		err = os.WriteFile(expectedPath, actual, 0644)
 		assert.NoError(t, err)
 	}
 
-	assert.Equal(t, jsonExpected, actual)
+	expected, err := os.ReadFile(expectedPath)
+	assert.NoError(t, err)
+
+	assert.JSONEq(t, string(expected), string(actual))
 }
