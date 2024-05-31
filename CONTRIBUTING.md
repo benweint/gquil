@@ -32,7 +32,7 @@ git clone git@github.com:benweint/gquil.git
 
 `gquil` is implemented in Go, so you'll need to have a version of Go installed to build or contribute to it. It uses `golangci-lint` for linting.
 
-I use [mise](https://mise.jdx.dev/) for managing my local Go & golangci-lint versions. If do too:
+I use [mise](https://mise.jdx.dev/) for managing my local Go & golangci-lint versions. If you do too:
 
 ```
 cd gquil
