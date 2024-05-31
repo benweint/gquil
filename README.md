@@ -20,6 +20,10 @@ brew tap benweint/gquil https://github.com/benweint/gquil
 brew install gquil
 ```
 
+## Feedback & contributions
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
 ## Capabilities
 
 ### Visualizing schemas

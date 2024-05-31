@@ -7,6 +7,7 @@
 
 - [x] Make `gquil help <subcommand>` show help instead of an error
 - [x] Make help text link back to a path for feedback, issues
+- [ ] Add a CONTRIBUTING.md file with info about development, processes
 - [ ] Add examples to the in-tool documentation
 - [ ] Add a manpage
 
