@@ -7,7 +7,7 @@
 
 - [x] Make `gquil help <subcommand>` show help instead of an error
 - [x] Make help text link back to a path for feedback, issues
-- [ ] Add a CONTRIBUTING.md file with info about development, processes
+- [x] Add a CONTRIBUTING.md file with info about development, processes
 - [ ] Add examples to the in-tool documentation
 - [ ] Add a manpage
 
@@ -18,7 +18,7 @@
 
 ## Argument handling
 
-- [ ] Make it possible to read header values from a file ala `curl -H @filename`
+- [x] Make it possible to read header values from a file ala `curl -H @filename`
 
 ## Error handling
 

@@ -120,11 +120,7 @@ func (c *Client) issueQuery(query string, vars map[string]any, operation string)
 		return nil, fmt.Errorf("failed to create introspection request: %w", err)
 	}
 
-	for k, vs := range c.headers {
-		for _, v := range vs {
-			req.Header.Set(k, v)
-		}
-	}
+	req.Header = c.headers
 
 	if c.traceOut != nil {
 		requestDump, err := httputil.DumpRequestOut(req, true)
