@@ -2,13 +2,15 @@
 
 Thank you for your interest in contributing to `gquil`!
 
+This tool was borne of my frustration with the existing tooling for working with GraphQL schemas at the command line, so is currently shaped by my own personal preferences and tastes, but I want it to be generally useful for people working with GraphQL on a daily basis.
+
 ## Providing feedback
 
-This tool was borne of my frustration with the existing tooling for working with GraphQL schemas at the command line, so is currently shaped by my own personal preferences and tastes, but I want it to be generally useful for people working with GraphQL on a daily basis. To that end, I want to hear from you about:
+I would love to hear from you about:
 
-- Bugs you encounter while using it
-- Things you were confused by
-- Things you wish the tool would do that it doesn't 
+- Bugs you encounter while using `gquil`
+- Things you were confused by in the behavior of the tool or documentation
+- Things you wish the tool would do that it doesn't
 
 You can report any of these kinds of feedback via a GitHub [issue](https://github.com/benweint/gquil/issues).
 
@@ -30,7 +32,7 @@ git clone git@github.com:benweint/gquil.git
 
 ### Install tools
 
-`gquil` is implemented in Go, so you'll need to have a version of Go installed to build or contribute to it. It uses `golangci-lint` for linting.
+`gquil` is implemented in Go, so you'll need to have a version of Go installed to build or contribute to it. It uses [`golangci-lint`](https://github.com/golangci/golangci-lint) for linting.
 
 I use [mise](https://mise.jdx.dev/) for managing my local Go & golangci-lint versions. If you do too:
 
@@ -44,7 +46,6 @@ golangci-lint --version
 ```
 
 Otherwise, check `.mise.toml` for the current Go and golangci-lint versions to use.
-
 
 ### Running the tests
 
@@ -63,3 +64,4 @@ golangci-lint run ./...
 ```
 make check
 ```
+
