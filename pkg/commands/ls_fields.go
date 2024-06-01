@@ -19,6 +19,14 @@ type LsFieldsCmd struct {
 	GraphFilteringOptions
 }
 
+func (c LsFieldsCmd) Help() string {
+	return `Fields are identified as <type>.<fieldname>, where <type> is the host type on which they are defined, and are emitted in sorted order by these identifiers.
+
+You can use the --on-type, --of-type, --returning-type, and --named arguments to filter the set of returned fields. You can also filter by graph reachability using the --from and --depth options, see the help for these flags for details.
+
+Field arguments and directives are not included in the output by default (only names and types), but can be added with --include-args and --include-directives, respectivesly. You can also use --json for a JSON output format. The JSON output format matches the one used by the json subcommand, with the exception that field names will include the host type as a prefix (e.g. 'Query.search' instead of just 'search').`
+}
+
 func (c LsFieldsCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {

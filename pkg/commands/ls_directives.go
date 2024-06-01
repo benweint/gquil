@@ -13,6 +13,12 @@ type LsDirectivesCmd struct {
 	OutputOptions
 }
 
+func (c LsDirectivesCmd) Help() string {
+	return `List all directive definitions in the given GraphQL SDL file(s).
+
+By default, directives are emitted with their argument definitions and valid application locations, in a format that mirrors the SDL for defining them. You can emit JSON representations of them instead with the --json flag.`
+}
+
 func (c LsDirectivesCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
