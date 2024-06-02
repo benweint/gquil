@@ -9,6 +9,8 @@ It is designed to help make large GraphQL schemas more easily navigable, and is 
 - GraphViz's [DOT language](https://graphviz.org/doc/info/lang.html) for visualization purposes (suitable for use with `dot`)
 - GraphQL SDL (suitable for feeding back into `gquil` itself, or using with other GraphQL-related tools)
 
+gquil aims to follow the [Command Line Interface Guidelines](https://clig.dev/).
+
 ## Installation
 
 Pre-built binaries for macOS and Linux are published to [GitHub releases](https://github.com/benweint/gquil/releases).
