@@ -4,6 +4,10 @@ Thank you for your interest in contributing to `gquil`!
 
 This tool was borne of my frustration with the existing tooling for working with GraphQL schemas at the command line, so is currently shaped by my own personal preferences and tastes, but I want it to be generally useful for people working with GraphQL on a daily basis.
 
+## Code of conduct
+
+This project has a [code of conduct](./CODE_OF_CONDUCT.md), please observe it.
+
 ## Providing feedback
 
 I would love to hear from you about:
