@@ -19,6 +19,17 @@ type LsTypesCmd struct {
 	GraphFilteringOptions
 }
 
+func (c LsTypesCmd) Help() string {
+	return `Types include objects types, interfaces, unions, enums, input objects, and scalars. The default output format prepends each listed type with its kind. You can filter to a specific kind using --kind, which will cause the kind to be omitted in the output. For example:
+
+  gquil ls types --kind interface examples/github.graphql
+
+You can also filter types based on their membership in a union type (--member-of), or based on whether they implement a specified interface (--implements). You can also filter by graph reachability using the --from and --depth options, see the help for these flags for details.
+
+Directives are not included in the output by default, but can be added with --include-directives. You can also use --json for a JSON output format. The JSON output format matches the one used by the json subcommand.
+`
+}
+
 func (c LsTypesCmd) Run(ctx Context) error {
 	s, err := loadSchemaModel(c.SchemaFiles)
 	if err != nil {
