@@ -1,0 +1,1 @@
+args: ["viz", "--from", "Query.fruit", "testdata/in.graphql"]

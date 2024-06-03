@@ -135,7 +135,6 @@ func (g *Graph) GetDefinitions() model.DefinitionMap {
 
 func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph {
 	var defs model.DefinitionList
-
 	for _, node := range g.nodes {
 		defs = append(defs, node)
 	}
@@ -191,11 +190,15 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 	for from, edges := range g.edges {
 		var filtered []*edge
 		for _, edge := range edges {
-			if _, ok := g.nodes[edge.src.Name]; ok {
+			_, srcPresent := filteredNodes[edge.src.Name]
+			_, dstPresent := filteredNodes[edge.dst.Name]
+			if srcPresent && dstPresent {
 				filtered = append(filtered, edge)
 			}
 		}
-		filteredEdges[from] = filtered
+		if len(filtered) > 0 {
+			filteredEdges[from] = filtered
+		}
 	}
 
 	return &Graph{
@@ -229,7 +232,6 @@ func (g *Graph) buildNodeDefs() []string {
 }
 
 func (g *Graph) buildEdgeDefs() []string {
-
 	var result []string
 	for _, sourceNodeName := range sortedKeys(g.edges) {
 		edges := g.edges[sourceNodeName]
