@@ -207,6 +207,29 @@ func TestReachableFrom(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "filtered self edges",
+			schema: `type Person {
+				hobbies: [Hobby]
+				friends: [Person]
+			}
+
+			type Hobby {
+				name: String
+			}
+			`,
+			roots:          []string{"Person.hobbies"},
+			maxDepth:       2,
+			expectedNodes:  []string{"Hobby", "Person"},
+			expectedFields: []string{"Hobby.name", "Person.hobbies"},
+			expectedEdges: []edgeSpec{
+				{
+					srcType:   "Person",
+					dstType:   "Hobby",
+					fieldName: "hobbies",
+				},
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			src := ast.Source{

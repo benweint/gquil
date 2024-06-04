@@ -196,7 +196,8 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 		for _, edge := range edges {
 			_, srcPresent := filteredNodes[edge.src.Name]
 			_, dstPresent := filteredNodes[edge.dst.Name]
-			if srcPresent && dstPresent {
+			fieldPresent := edge.field == nil || seen.includesField(edge.src.Name, edge.field.Name)
+			if srcPresent && dstPresent && fieldPresent {
 				filtered = append(filtered, edge)
 			}
 		}
