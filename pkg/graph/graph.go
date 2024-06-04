@@ -110,10 +110,6 @@ func (g *Graph) makeFieldEdge(src *model.Definition, targetType *model.Type, f *
 		kind = edgeKindArgument
 	}
 
-	targetTypeKind := targetType.Kind
-	if targetTypeKind == model.ScalarKind {
-		return nil
-	}
 	srcNode := g.nodes[src.Name]
 	dstNode := g.nodes[targetType.Name]
 	if srcNode == nil || dstNode == nil {
@@ -165,21 +161,15 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 		if _, ok := seen[key]; ok {
 			return
 		}
-		if n.Kind == ast.Scalar {
-			return
-		}
 
 		seen[key] = true
-		kind := normalizeKind(n.Kind, g.interfacesAsUnions)
 
-		switch kind {
-		case ast.Object, ast.InputObject:
-			for _, field := range n.Fields {
-				traverseField(n.Name, field, depth)
-			}
-		case ast.Union:
-			for _, pt := range n.PossibleTypes {
-				traverse(g.nodes[pt], depth+1)
+		for _, e := range g.edges[n.Name] {
+			switch e.kind {
+			case edgeKindField, edgeKindArgument:
+				traverseField(n.Name, e.field, depth)
+			case edgeKindPossibleType:
+				traverse(e.dst, depth+1)
 			}
 		}
 	}
@@ -250,6 +240,10 @@ func (g *Graph) buildEdgeDefs() []string {
 	for _, sourceNodeName := range sortedKeys(g.edges) {
 		edges := g.edges[sourceNodeName]
 		for _, edge := range edges {
+			if edge.dst.Kind == ast.Scalar {
+				continue
+			}
+
 			srcPortSuffix := ""
 			dstPortSuffix := ":main"
 

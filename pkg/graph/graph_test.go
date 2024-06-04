@@ -230,6 +230,9 @@ func TestReachableFrom(t *testing.T) {
 			var actualFields []string
 
 			for _, node := range trimmed.nodes {
+				if node.Kind == ast.Scalar {
+					continue
+				}
 				actualNodes = append(actualNodes, node.Name)
 				for _, field := range node.Fields {
 					fieldId := node.Name + "." + field.Name
@@ -245,6 +248,9 @@ func TestReachableFrom(t *testing.T) {
 
 			for _, edges := range trimmed.edges {
 				for _, edge := range edges {
+					if edge.dst.Kind == ast.Scalar {
+						continue
+					}
 					fieldName := ""
 					if edge.field != nil {
 						fieldName = edge.field.Name
