@@ -94,10 +94,9 @@ func (g *Graph) makeUnionEdges(t *model.Definition) []*edge {
 			continue
 		}
 		result = append(result, &edge{
-			src:          srcNode,
-			dst:          dstNode,
-			kind:         edgeKindPossibleType,
-			possibleType: possibleType,
+			src:  srcNode,
+			dst:  dstNode,
+			kind: edgeKindPossibleType,
 		})
 	}
 	return result
@@ -269,7 +268,7 @@ func (g *Graph) buildEdgeDefs() []string {
 			case edgeKindArgument:
 				srcPortSuffix = ":" + portNameForArgument(edge.field.Name, edge.argument.Name)
 			case edgeKindPossibleType:
-				srcPortSuffix = ":" + portName(edge.possibleType)
+				srcPortSuffix = ":" + portName(edge.dst.Name)
 			}
 
 			result = append(result, fmt.Sprintf("  %s%s -> %s%s", nodeID(edge.src), srcPortSuffix, nodeID(edge.dst), dstPortSuffix))

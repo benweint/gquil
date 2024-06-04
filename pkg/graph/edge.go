@@ -11,10 +11,9 @@ const (
 )
 
 type edge struct {
-	src          *model.Definition
-	dst          *model.Definition
-	kind         edgeKind
-	field        *model.FieldDefinition
-	argument     *model.ArgumentDefinition
-	possibleType string
+	kind     edgeKind
+	src      *model.Definition
+	dst      *model.Definition
+	field    *model.FieldDefinition    // only set for fields representing eges or arguments
+	argument *model.ArgumentDefinition // only set for fields representing arguments
 }
