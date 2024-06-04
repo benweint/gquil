@@ -134,39 +134,49 @@ func (g *Graph) GetDefinitions() model.DefinitionMap {
 }
 
 func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph {
-	var defs model.DefinitionList
-	for _, node := range g.nodes {
-		defs = append(defs, node)
-	}
-	rootDefs := applyFieldFilters(defs, roots)
-
-	seen := model.DefinitionMap{}
+	seen := referenceSet{}
 
 	var traverse func(n *model.Definition, depth int)
+
+	traverseField := func(typeName string, f *model.FieldDefinition, depth int) {
+		key := fieldRef(typeName, f.Name)
+		if seen[key] {
+			return
+		}
+		seen[key] = true
+
+		if maxDepth > 0 && depth > maxDepth {
+			return
+		}
+
+		for _, arg := range f.Arguments {
+			argType := arg.Type.Unwrap()
+			traverse(g.nodes[argType.Name], depth+1)
+		}
+
+		underlyingType := f.Type.Unwrap()
+		traverse(g.nodes[underlyingType.Name], depth+1)
+	}
+
 	traverse = func(n *model.Definition, depth int) {
 		if maxDepth > 0 && depth > maxDepth {
 			return
 		}
-		if _, ok := seen[n.Name]; ok {
+		key := typeRef(n.Name)
+		if _, ok := seen[key]; ok {
 			return
 		}
 		if n.Kind == ast.Scalar {
 			return
 		}
 
-		seen[n.Name] = n
+		seen[key] = true
 		kind := normalizeKind(n.Kind, g.interfacesAsUnions)
 
 		switch kind {
 		case ast.Object, ast.InputObject:
 			for _, field := range n.Fields {
-				for _, arg := range field.Arguments {
-					argType := arg.Type.Unwrap()
-					traverse(g.nodes[argType.Name], depth+1)
-				}
-
-				underlyingType := field.Type.Unwrap()
-				traverse(g.nodes[underlyingType.Name], depth+1)
+				traverseField(n.Name, field, depth)
 			}
 		case ast.Union:
 			for _, pt := range n.PossibleTypes {
@@ -175,14 +185,19 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 		}
 	}
 
-	for _, root := range rootDefs {
-		traverse(root, 1)
+	for _, root := range roots {
+		targetType := root.GetTargetType()
+		if fieldName := root.GetFieldName(); fieldName != "" {
+			traverseField(targetType.Name, targetType.Fields.Named(fieldName), 1)
+		} else {
+			traverse(targetType, 1)
+		}
 	}
 
 	filteredNodes := model.DefinitionMap{}
 	for name, node := range g.nodes {
-		if _, ok := seen[name]; ok {
-			filteredNodes[name] = node
+		if seen.includesType(name) {
+			filteredNodes[name] = seen.filterFields(node)
 		}
 	}
 

@@ -35,6 +35,15 @@ func (fdl FieldDefinitionList) Sort() {
 	})
 }
 
+func (fdl FieldDefinitionList) Named(name string) *FieldDefinition {
+	for _, field := range fdl {
+		if field.Name == name {
+			return field
+		}
+	}
+	return nil
+}
+
 func (fd *FieldDefinition) MarshalJSON() ([]byte, error) {
 	m := map[string]any{
 		"name":               fd.Name,

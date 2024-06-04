@@ -32,10 +32,6 @@ digraph {
     <TR><TD COLSPAN="3" PORT="main" BGCOLOR="#fbb4ae">object Query</TD></TR>
     <TR><TD ROWSPAN="2">fruit</TD><TD COLSPAN="2" PORT="p_fruit">Fruit</TD></TR>
     <TR><TD>name</TD><TD PORT="p_fruit_name">String</TD></TR>
-    <TR><TD ROWSPAN="2">edible</TD><TD COLSPAN="2" PORT="p_edible">Edible</TD></TR>
-    <TR><TD>name</TD><TD PORT="p_edible_name">String</TD></TR>
-    <TR><TD ROWSPAN="2">edibles</TD><TD COLSPAN="2" PORT="p_edibles">[Edible!]!</TD></TR>
-    <TR><TD>filter</TD><TD PORT="p_edibles_filter">Filter</TD></TR>
 
   </TABLE>>]
   n_Apple:p_variety -> n_AppleVariety:main
