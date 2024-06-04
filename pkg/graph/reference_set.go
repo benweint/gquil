@@ -2,32 +2,14 @@ package graph
 
 import "github.com/benweint/gquil/pkg/model"
 
-// typeOrField refers to either an entire GraphQL type (e.g. a union type), or to a specific field
-// on a type. When refering to an entire type, the fieldName field is set to its zero value (empty string).
-type typeOrField struct {
-	typeName  string
-	fieldName string
-}
-
-func typeRef(name string) typeOrField {
-	return typeOrField{typeName: name}
-}
-
-func fieldRef(typeName, fieldName string) typeOrField {
-	return typeOrField{
-		typeName:  typeName,
-		fieldName: fieldName,
-	}
-}
-
 // referenceSet captures the set of types & fields which have been encountered when traversing a GraphQL schema.
-type referenceSet map[typeOrField]bool
+type referenceSet map[model.NameReference]bool
 
 // includesType returns true if the target referenceSet includes at least one field on the given type name,
 // or a key representing the entire type.
 func (s referenceSet) includesType(name string) bool {
 	for key := range s {
-		if key.typeName == name {
+		if key.TypeName == name {
 			return true
 		}
 	}
@@ -36,7 +18,7 @@ func (s referenceSet) includesType(name string) bool {
 
 // includesField returns true if the given referenceSet includes a key representing the given field on the given type.
 func (s referenceSet) includesField(typeName, fieldName string) bool {
-	return s[typeOrField{typeName: typeName, fieldName: fieldName}]
+	return s[model.FieldNameReference(typeName, fieldName)]
 }
 
 // filterFields returns a copy of the given definition, where the field list has been filtered to only include

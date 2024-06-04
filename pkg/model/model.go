@@ -80,8 +80,7 @@ func (s *Schema) resolveName(name string) *NameReference {
 		if def.Name == typePart {
 			if len(parts) == 1 {
 				return &NameReference{
-					Kind:    TypeNameReference,
-					typeRef: def,
+					TypeName: def.Name,
 				}
 			}
 
@@ -89,9 +88,8 @@ func (s *Schema) resolveName(name string) *NameReference {
 			for _, field := range def.Fields {
 				if field.Name == fieldPart {
 					return &NameReference{
-						Kind:    FieldNameReference,
-						typeRef: def,
-						field:   field,
+						TypeName:  def.Name,
+						FieldName: field.Name,
 					}
 				}
 			}

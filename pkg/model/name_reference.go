@@ -1,26 +1,19 @@
 package model
 
-type NameReferenceKind int
-
-const (
-	TypeNameReference = iota
-	FieldNameReference
-	InputFieldNameReference
-)
-
 type NameReference struct {
-	Kind    NameReferenceKind
-	typeRef *Definition
-	field   *FieldDefinition
+	TypeName  string
+	FieldName string
 }
 
-func (n *NameReference) GetTargetType() *Definition {
-	return n.typeRef
-}
-
-func (n *NameReference) GetFieldName() string {
-	if n.field != nil {
-		return n.field.Name
+func TypeNameReference(name string) NameReference {
+	return NameReference{
+		TypeName: name,
 	}
-	return ""
+}
+
+func FieldNameReference(typeName, fieldName string) NameReference {
+	return NameReference{
+		TypeName:  typeName,
+		FieldName: fieldName,
+	}
 }

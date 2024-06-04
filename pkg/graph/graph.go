@@ -138,7 +138,7 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 	var traverse func(n *model.Definition, depth int)
 
 	traverseField := func(typeName string, f *model.FieldDefinition, depth int) {
-		key := fieldRef(typeName, f.Name)
+		key := model.FieldNameReference(typeName, f.Name)
 		if seen[key] {
 			return
 		}
@@ -161,7 +161,7 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 		if maxDepth > 0 && depth > maxDepth {
 			return
 		}
-		key := typeRef(n.Name)
+		key := model.TypeNameReference(n.Name)
 		if _, ok := seen[key]; ok {
 			return
 		}
@@ -185,9 +185,9 @@ func (g *Graph) ReachableFrom(roots []*model.NameReference, maxDepth int) *Graph
 	}
 
 	for _, root := range roots {
-		targetType := root.GetTargetType()
-		if fieldName := root.GetFieldName(); fieldName != "" {
-			traverseField(targetType.Name, targetType.Fields.Named(fieldName), 1)
+		targetType := g.nodes[root.TypeName]
+		if root.FieldName != "" {
+			traverseField(targetType.Name, targetType.Fields.Named(root.FieldName), 1)
 		} else {
 			traverse(targetType, 1)
 		}
