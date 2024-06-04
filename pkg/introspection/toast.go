@@ -94,6 +94,11 @@ func responseToAst(s *Schema) (*ast.Schema, error) {
 			Arguments:    makeArgumentDefinitionList(dir.Args),
 			Locations:    locations,
 			IsRepeatable: dir.IsRepeatable,
+			Position: &ast.Position{
+				Src: &ast.Source{
+					BuiltIn: false,
+				},
+			},
 		}
 	}
 
