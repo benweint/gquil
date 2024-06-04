@@ -245,9 +245,6 @@ func (g *Graph) buildEdgeDefs() []string {
 				continue
 			}
 
-			srcPortSuffix := ""
-			dstPortSuffix := ":main"
-
 			if !g.renderBuiltins {
 				if astutil.IsBuiltinType(edge.src.Name) {
 					continue
@@ -257,6 +254,7 @@ func (g *Graph) buildEdgeDefs() []string {
 				}
 			}
 
+			srcPortSuffix := ""
 			switch edge.kind {
 			case edgeKindField:
 				srcPortSuffix = ":" + portName(edge.field.Name)
@@ -264,6 +262,15 @@ func (g *Graph) buildEdgeDefs() []string {
 				srcPortSuffix = ":" + portNameForArgument(edge.field.Name, edge.argument.Name)
 			case edgeKindPossibleType:
 				srcPortSuffix = ":" + portName(edge.dst.Name)
+			}
+
+			dstPortSuffix := ":main"
+
+			// if the src and dst nodes are the same, we can avoid the edge overlapping
+			// the field name by forcing it to the right-hand side of the node.
+			if edge.src.Name == edge.dst.Name {
+				srcPortSuffix += ":e"
+				dstPortSuffix += ":e"
 			}
 
 			result = append(result, fmt.Sprintf("  %s%s -> %s%s", nodeID(edge.src), srcPortSuffix, nodeID(edge.dst), dstPortSuffix))

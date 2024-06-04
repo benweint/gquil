@@ -1,0 +1,11 @@
+digraph {
+  rankdir=LR
+  ranksep=2
+  node [shape=box fontname=Courier]
+  n_Person [shape=plain, label=<<TABLE>
+    <TR><TD COLSPAN="3" PORT="main" BGCOLOR="#fbb4ae">object Person</TD></TR>
+    <TR><TD ROWSPAN="1">friends</TD><TD COLSPAN="2" PORT="p_friends">[Person]</TD></TR>
+
+  </TABLE>>]
+  n_Person:p_friends:e -> n_Person:main:e
+}
