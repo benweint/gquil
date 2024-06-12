@@ -73,7 +73,12 @@ func (c *Client) FetchSchemaAst() (*ast.Schema, error) {
 		return nil, err
 	}
 
-	return responseToAst(rawSchema)
+	s, err := responseToAst(rawSchema)
+	if err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }
 
 func (c *Client) fetchSchema() (*Schema, error) {
