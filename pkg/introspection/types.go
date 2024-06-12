@@ -8,6 +8,8 @@ type IntrospectionQueryResult struct {
 	Schema Schema `json:"__schema"`
 }
 
+// Schema represents an instance of the __Schema introspection type:
+// https://spec.graphql.org/October2021/#sec-The-__Schema-Type
 type Schema struct {
 	Types            []Type      `json:"types"`
 	QueryType        Type        `json:"queryType,omitempty"`
@@ -16,6 +18,8 @@ type Schema struct {
 	Directives       []Directive `json:"directives,omitempty"`
 }
 
+// Type represents an instance of the __Type introspection type:
+// https://spec.graphql.org/October2021/#sec-The-__Type-Type
 type Type struct {
 	Kind        TypeKind `json:"kind"`
 	Name        string   `json:"name,omitempty"`
@@ -40,6 +44,8 @@ type Type struct {
 	OfType *Type `json:"ofType,omitempty"`
 }
 
+// Directive represents an instance of the __Directive introspection type:
+// https://spec.graphql.org/October2021/#sec-The-__Directive-Type
 type Directive struct {
 	Name         string              `json:"name"`
 	Description  string              `json:"description,omitempty"`
@@ -48,6 +54,8 @@ type Directive struct {
 	IsRepeatable bool                `json:"isRepeatable"`
 }
 
+// Field represents an instance of the __Field introspection type:
+// https://spec.graphql.org/October2021/#sec-The-__Field-Type
 type Field struct {
 	Name              string       `json:"name"`
 	Description       string       `json:"description,omitempty"`
@@ -57,6 +65,8 @@ type Field struct {
 	DeprecationReason string       `json:"deprecationReason"`
 }
 
+// EnumValue represents an instance of the __EnumValue introspection type:
+// https://spec.graphql.org/October2021/#sec-The-__EnumValue-Type
 type EnumValue struct {
 	Name              string `json:"name"`
 	Description       string `json:"description"`
@@ -64,6 +74,8 @@ type EnumValue struct {
 	DeprecationReason string `json:"deprecationReason"`
 }
 
+// InputValue represents an instance of the __InputValue introspection type:
+// https://spec.graphql.org/October2021/#sec-The-__InputValue-Type
 type InputValue struct {
 	Name         string  `json:"name"`
 	Description  string  `json:"description,omitempty"`
@@ -71,6 +83,7 @@ type InputValue struct {
 	DefaultValue *string `json:"defaultValue,omitempty"`
 }
 
+// TypeKind represents a possible value of the __TypeKind introspection enum.
 type TypeKind string
 
 const (
@@ -84,4 +97,5 @@ const (
 	NonNullKind     = TypeKind("NON_NULL")
 )
 
+// DirectiveLocation represents a possible value of the __DirectiveLocation introspection enum.
 type DirectiveLocation string

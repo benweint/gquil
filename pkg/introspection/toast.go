@@ -202,6 +202,16 @@ func makeDefaultValue(t *Type, raw string) (*ast.Value, error) {
 	}, nil
 }
 
+// makeValue parses a raw string representing a GraphQL Value[1]
+// This is useful for handling the __InputValue.defaultValue field[2] in the
+// introspection schema.
+//
+// Since the GraphQL parser we're using doesn't support parsing a Value directly,
+// we have to wrap the value in a dummy query here, providing it as an argument
+// to a non-existent field.
+//
+// [1]: https://spec.graphql.org/October2021/#Value
+// [2]: https://spec.graphql.org/October2021/#sec-The-__InputValue-Type
 func makeValue(raw string) (*ast.Value, error) {
 	src := &ast.Source{
 		Input: fmt.Sprintf("{ f(in: %s) }", raw),
