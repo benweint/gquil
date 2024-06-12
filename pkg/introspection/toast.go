@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/vektah/gqlparser/v2/ast"
+	"github.com/vektah/gqlparser/v2/parser"
 )
 
 // responseToAst converts a deserialized introspection query result into an *ast.Schema, which
@@ -29,11 +30,15 @@ func responseToAst(s *Schema) (*ast.Schema, error) {
 		if def.Kind == ObjectKind || def.Kind == InputObjectKind || def.Kind == InterfaceKind {
 			var fields ast.FieldList
 			for _, inField := range def.Fields {
+				args, err := makeArgumentDefinitionList(inField.Args)
+				if err != nil {
+					return nil, err
+				}
 				field := ast.FieldDefinition{
 					Name:        inField.Name,
 					Description: inField.Description,
 					Type:        makeType(inField.Type),
-					Arguments:   makeArgumentDefinitionList(inField.Args),
+					Arguments:   args,
 					Directives:  synthesizeDeprecationDirective(inField.IsDeprecated, inField.DeprecationReason),
 				}
 				fields = append(fields, &field)
@@ -44,11 +49,13 @@ func responseToAst(s *Schema) (*ast.Schema, error) {
 					Description: inField.Description,
 					Type:        makeType(inField.Type),
 				}
-
 				if inField.DefaultValue != nil {
-					field.DefaultValue = makeDefaultValue(inField.Type, *inField.DefaultValue)
+					defaultValue, err := makeDefaultValue(inField.Type, *inField.DefaultValue)
+					if err != nil {
+						return nil, err
+					}
+					field.DefaultValue = defaultValue
 				}
-
 				fields = append(fields, &field)
 			}
 			newDef.Fields = fields
@@ -88,10 +95,14 @@ func responseToAst(s *Schema) (*ast.Schema, error) {
 		for _, loc := range dir.Locations {
 			locations = append(locations, ast.DirectiveLocation(loc))
 		}
+		args, err := makeArgumentDefinitionList(dir.Args)
+		if err != nil {
+			return nil, err
+		}
 		directiveMap[dir.Name] = &ast.DirectiveDefinition{
 			Name:         dir.Name,
 			Description:  dir.Description,
-			Arguments:    makeArgumentDefinitionList(dir.Args),
+			Arguments:    args,
 			Locations:    locations,
 			IsRepeatable: dir.IsRepeatable,
 			Position: &ast.Position{
@@ -132,7 +143,7 @@ func synthesizeDeprecationDirective(deprecated bool, deprecationReason string) a
 	}
 }
 
-func makeArgumentDefinitionList(in []InputValue) ast.ArgumentDefinitionList {
+func makeArgumentDefinitionList(in []InputValue) (ast.ArgumentDefinitionList, error) {
 	var result ast.ArgumentDefinitionList
 	for _, inArg := range in {
 		arg := &ast.ArgumentDefinition{
@@ -142,64 +153,66 @@ func makeArgumentDefinitionList(in []InputValue) ast.ArgumentDefinitionList {
 		}
 
 		if inArg.DefaultValue != nil {
-			arg.DefaultValue = makeDefaultValue(inArg.Type, *inArg.DefaultValue)
+			var err error
+			if arg.DefaultValue, err = makeDefaultValue(inArg.Type, *inArg.DefaultValue); err != nil {
+				return nil, err
+			}
 		}
 
 		result = append(result, arg)
 	}
-	return result
+	return result, nil
 }
 
-func makeDefaultValue(t *Type, raw string) *ast.Value {
-	switch t.Kind {
-	case ScalarKind:
-		switch t.Name {
-		case "Int":
-			return &ast.Value{
-				Kind: ast.IntValue,
-				Raw:  raw,
-			}
-		case "Float":
-			return &ast.Value{
-				Kind: ast.FloatValue,
-				Raw:  raw,
-			}
-		case "Boolean":
-			return &ast.Value{
-				Kind: ast.BooleanValue,
-				Raw:  raw,
-			}
-		case "String":
-			return &ast.Value{
-				Kind: ast.StringValue,
-				Raw:  raw,
-			}
-		default:
-			return &ast.Value{
-				Kind: ast.StringValue,
-				Raw:  raw,
-			}
-		}
-	case InputObjectKind:
-		return &ast.Value{
-			Kind: ast.ObjectValue,
-			Raw:  raw,
-		}
-	case ListKind:
-		return &ast.Value{
-			Kind: ast.ListValue,
-			Raw:  raw,
-		}
-	case EnumKind:
-		return &ast.Value{
-			Kind: ast.EnumValue,
-			Raw:  raw,
-		}
-	case NonNullKind:
-		return makeDefaultValue(t.OfType, raw)
+func makeDefaultValue(t *Type, raw string) (*ast.Value, error) {
+	var kind ast.ValueKind
+
+	switch raw {
+	case "null":
+		kind = ast.NullValue
+	case "true", "false":
+		kind = ast.BooleanValue
 	default:
-		panic(fmt.Errorf("unsupported type kind %s for default value '%s'", t.Kind, raw))
+		switch t.Kind {
+		case ScalarKind:
+			switch t.Name {
+			case "Int":
+				kind = ast.IntValue
+			case "Float":
+				kind = ast.FloatValue
+			case "String":
+				return makeValue(raw)
+			default:
+				kind = ast.StringValue
+			}
+		case InputObjectKind, ListKind:
+			return makeValue(raw)
+		case EnumKind:
+			kind = ast.EnumValue
+		case NonNullKind:
+			return makeDefaultValue(t.OfType, raw)
+		default:
+			return nil, fmt.Errorf("unsupported type kind %s for default value '%s'", t.Kind, raw)
+		}
 	}
+
+	return &ast.Value{
+		Kind: kind,
+		Raw:  raw,
+	}, nil
+}
+
+func makeValue(raw string) (*ast.Value, error) {
+	src := &ast.Source{
+		Input: fmt.Sprintf("{ f(in: %s) }", raw),
+	}
+	doc, err := parser.ParseQuery(src)
+	if err != nil {
+		return nil, err
+	}
+
+	field := doc.Operations[0].SelectionSet[0].(*ast.Field)
+	return field.Arguments[0].Value, nil
 }
 
 func makeType(in *Type) *ast.Type {
