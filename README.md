@@ -1,6 +1,6 @@
 # `gquil`
 
-`gquil` is a tool for introspecting GraphQL schemas on the command line.
+`gquil` is a tool for introspecting GraphQL schemas on the command line. See the [blog post](https://www.benweintraub.com/2024/06/13/gquil-a-cli-tool-for-graphql/) for a more narrative intro, or read on here for an overview.
 
 It is designed to help make large GraphQL schemas more easily navigable, and is intended to be used in conjunction with other CLI tools you already use. It can output information about large GraphQL schemas in several forms:
 
