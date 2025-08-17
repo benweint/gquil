@@ -5,7 +5,7 @@ before:
     - go mod tidy
 
 builds:
-  - main: ./cmd/gquil.go
+  - main: ./cmd/gquil
     env:
       - CGO_ENABLED=0
     goos:
