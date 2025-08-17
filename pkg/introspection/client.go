@@ -132,7 +132,7 @@ func (c *Client) issueQuery(query string, vars map[string]any, operation string)
 		if err != nil {
 			return nil, fmt.Errorf("failed to dump introspection HTTP request: %w", err)
 		}
-		fmt.Fprintf(c.traceOut, "---\nIntrospection request:\n%s\n", string(requestDump))
+		_, _ = fmt.Fprintf(c.traceOut, "---\nIntrospection request:\n%s\n", string(requestDump))
 	}
 
 	client := &http.Client{}
@@ -140,14 +140,14 @@ func (c *Client) issueQuery(query string, vars map[string]any, operation string)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send introspection request to %s: %w", c.endpoint, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if c.traceOut != nil {
 		rspDump, err := httputil.DumpResponse(resp, true)
 		if err != nil {
 			return nil, fmt.Errorf("failed to dump introspection HTTP response: %w", err)
 		}
-		fmt.Fprintf(c.traceOut, "\n---\nIntrospection response:\n%s\n", string(rspDump))
+		_, _ = fmt.Fprintf(c.traceOut, "\n---\nIntrospection response:\n%s\n", string(rspDump))
 	}
 
 	rspBody, err := io.ReadAll(resp.Body)

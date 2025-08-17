@@ -10,7 +10,6 @@ type versionFlag bool
 
 func (f versionFlag) BeforeReset(ctx *kong.Context) error {
 	_, _ = ctx.Stdout.Write([]byte(version + "\n"))
-	ctx.Kong.Exit(0)
 	return nil
 }
 
