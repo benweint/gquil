@@ -5,21 +5,21 @@
 class Gquil < Formula
   desc "Inspect, visualize, and transform GraphQL schemas on the command line."
   homepage "https://github.com/benweint/gquil"
-  version "0.2.3"
+  version "0.2.5"
   license "MIT"
 
   on_macos do
     on_intel do
-      url "https://github.com/benweint/gquil/releases/download/v0.2.3/gquil_darwin_x86_64.tar.gz", using: CurlDownloadStrategy
-      sha256 "45aaf06cc882f1f336107d555926f7ec25e673aea10c85ab2a4364afaa01b0f5"
+      url "https://github.com/benweint/gquil/releases/download/v0.2.5/gquil_darwin_x86_64.tar.gz", using: CurlDownloadStrategy
+      sha256 "601ada38d60d9455e88a6edbbe68642e75ec6c308c267bf8277edfc1082d2fea"
 
       def install
         bin.install "gquil"
       end
     end
     on_arm do
-      url "https://github.com/benweint/gquil/releases/download/v0.2.3/gquil_darwin_arm64.tar.gz", using: CurlDownloadStrategy
-      sha256 "559ace3f3f6bfc6ebf068168e3c9f25d0a7bae63b98570fea2413cb5c8987aa7"
+      url "https://github.com/benweint/gquil/releases/download/v0.2.5/gquil_darwin_arm64.tar.gz", using: CurlDownloadStrategy
+      sha256 "1e2b0ce7e7848cecda2e5431de271ac480eeb5196c9be7838d13a61ce1b43ce6"
 
       def install
         bin.install "gquil"
@@ -30,8 +30,8 @@ class Gquil < Formula
   on_linux do
     on_intel do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/benweint/gquil/releases/download/v0.2.3/gquil_linux_x86_64.tar.gz", using: CurlDownloadStrategy
-        sha256 "66f193b1958b04d6c2545a7057b2498a0fdbdb57f620446fe28f3d83add92b79"
+        url "https://github.com/benweint/gquil/releases/download/v0.2.5/gquil_linux_x86_64.tar.gz", using: CurlDownloadStrategy
+        sha256 "a60f281be9d89e99621d20df9df6974d047a2db4116c096870d5852eb954e221"
 
         def install
           bin.install "gquil"
@@ -40,8 +40,8 @@ class Gquil < Formula
     end
     on_arm do
       if Hardware::CPU.is_64_bit?
-        url "https://github.com/benweint/gquil/releases/download/v0.2.3/gquil_linux_arm64.tar.gz", using: CurlDownloadStrategy
-        sha256 "b95f2f4c45c58848f3ac58d27219570d84d835481c1b1cb3922ae1d3c26f659f"
+        url "https://github.com/benweint/gquil/releases/download/v0.2.5/gquil_linux_arm64.tar.gz", using: CurlDownloadStrategy
+        sha256 "4bc5d42a24f25039d9e946be562e926fd1127c2647034c8fd84c5956498e4c39"
 
         def install
           bin.install "gquil"
