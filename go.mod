@@ -4,9 +4,11 @@ go 1.22
 
 require (
 	github.com/alecthomas/kong v0.9.0
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.11
 )
+
+require gopkg.in/yaml.v3 v3.0.1 // indirect
 
 require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect

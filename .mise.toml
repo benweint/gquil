@@ -1,6 +1,3 @@
 [tools]
-golang = { version = "prefix:1.22" }
-golangci-lint = "1.59.0"
-
-[plugins]
-golangci-lint = 'https://github.com/hypnoglow/asdf-golangci-lint'
+golang = { version = "prefix:1.25" }
+golangci-lint = "2.4.0"
